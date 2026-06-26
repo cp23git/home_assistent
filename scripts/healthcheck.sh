@@ -16,12 +16,22 @@ cd "$ROOT_DIR"
 : "${HA_BASE_URL:=http://127.0.0.1:8123}"
 : "${HA_LONG_LIVED_TOKEN:=}"
 
-if ! command -v docker >/dev/null 2>&1; then
+resolve_docker() {
+  if command -v docker >/dev/null 2>&1; then
+    command -v docker
+    return
+  fi
+  if [ -x /usr/local/bin/docker ]; then
+    printf '%s\n' /usr/local/bin/docker
+    return
+  fi
   printf '%s\n' 'docker is required for healthchecks.' >&2
   exit 1
-fi
+}
 
-state=$(docker inspect -f '{{.State.Running}}' homeassistant 2>/dev/null || true)
+docker_bin=$(resolve_docker)
+
+state=$("$docker_bin" inspect -f '{{.State.Running}}' homeassistant 2>/dev/null || true)
 if [ "$state" != 'true' ]; then
   printf '%s\n' 'Home Assistant container is not running.' >&2
   exit 1

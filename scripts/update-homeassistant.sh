@@ -15,9 +15,23 @@ cd "$ROOT_DIR"
 
 : "${HA_IMAGE:=ghcr.io/home-assistant/home-assistant:stable}"
 
+resolve_docker() {
+  if command -v docker >/dev/null 2>&1; then
+    command -v docker
+    return
+  fi
+  if [ -x /usr/local/bin/docker ]; then
+    printf '%s\n' /usr/local/bin/docker
+    return
+  fi
+  printf '%s\n' 'docker is required but was not found in PATH or /usr/local/bin/docker.' >&2
+  exit 1
+}
+
 compose() {
-  if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
-    docker compose "$@"
+  docker_bin=$(resolve_docker)
+  if "$docker_bin" compose version >/dev/null 2>&1; then
+    "$docker_bin" compose "$@"
     return
   fi
   if command -v docker-compose >/dev/null 2>&1; then
@@ -28,10 +42,11 @@ compose() {
   exit 1
 }
 
-current_image=$(docker inspect -f '{{.Config.Image}}' homeassistant 2>/dev/null || true)
+docker_bin=$(resolve_docker)
+current_image=$("$docker_bin" inspect -f '{{.Config.Image}}' homeassistant 2>/dev/null || true)
 current_version='unknown'
-if [ -n "$current_image" ] && docker image inspect "$current_image" >/dev/null 2>&1; then
-  current_version=$(docker image inspect -f '{{index .Config.Labels "org.opencontainers.image.version"}}' "$current_image" 2>/dev/null || printf '%s' 'unknown')
+if [ -n "$current_image" ] && "$docker_bin" image inspect "$current_image" >/dev/null 2>&1; then
+  current_version=$("$docker_bin" image inspect -f '{{index .Config.Labels "org.opencontainers.image.version"}}' "$current_image" 2>/dev/null || printf '%s' 'unknown')
 fi
 
 printf 'Current image: %s\n' "${current_image:-not installed yet}"

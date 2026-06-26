@@ -17,9 +17,23 @@ cd "$ROOT_DIR"
 : "${BACKUP_DIR:=$ROOT_DIR/backups}"
 : "${BACKUP_RETENTION_COUNT:=10}"
 
+resolve_docker() {
+  if command -v docker >/dev/null 2>&1; then
+    command -v docker
+    return
+  fi
+  if [ -x /usr/local/bin/docker ]; then
+    printf '%s\n' /usr/local/bin/docker
+    return
+  fi
+  printf '%s\n' 'docker is required but was not found in PATH or /usr/local/bin/docker.' >&2
+  exit 1
+}
+
 compose() {
-  if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
-    docker compose "$@"
+  docker_bin=$(resolve_docker)
+  if "$docker_bin" compose version >/dev/null 2>&1; then
+    "$docker_bin" compose "$@"
     return
   fi
   if command -v docker-compose >/dev/null 2>&1; then
