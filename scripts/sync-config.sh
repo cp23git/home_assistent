@@ -24,5 +24,9 @@ fi
 mkdir -p "$HA_CONFIG_PATH"
 
 printf 'Syncing Home Assistant config from %s to %s\n' "$SOURCE_DIR" "$HA_CONFIG_PATH"
-cp -R "$SOURCE_DIR"/. "$HA_CONFIG_PATH"/
+if command -v sudo >/dev/null 2>&1; then
+  sudo -S -p '' cp -R "$SOURCE_DIR"/. "$HA_CONFIG_PATH"/
+else
+  cp -R "$SOURCE_DIR"/. "$HA_CONFIG_PATH"/
+fi
 printf '%s\n' 'Config sync finished.'
