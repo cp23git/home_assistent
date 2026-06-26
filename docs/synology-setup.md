@@ -23,11 +23,14 @@ The repository is intentionally simple so it works well with both paths.
 
 ### Plain Docker Compose
 
-From the repository root run:
+From the repository root run the deployment script:
 
 ```sh
-docker compose up -d
+./scripts/deploy.sh
 ```
+
+The deployment script copies the repository's `homeassistant/` files into the
+persistent config directory before starting the container.
 
 ## Required permissions
 
@@ -40,7 +43,6 @@ Host networking is the safest choice here because it improves local discovery an
 
 - mDNS
 - SSDP
-- Shelly discovery
 - other local LAN integrations
 
 It also avoids the extra troubleshooting that often comes with bridged networking on appliance-style NAS systems.

@@ -46,8 +46,10 @@ compose() {
 
 printf '%s\n' 'Preparing Home Assistant deployment...'
 printf 'Config path: %s\n' "$HA_CONFIG_PATH"
-mkdir -p "$HA_CONFIG_PATH"
 mkdir -p "$BACKUP_DIR"
+
+printf '%s\n' 'Syncing Home Assistant config files...'
+"$ROOT_DIR/scripts/sync-config.sh"
 
 printf '%s\n' 'Pulling the stable Home Assistant image...'
 compose -f "$ROOT_DIR/docker-compose.yml" pull homeassistant

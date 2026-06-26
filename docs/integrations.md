@@ -23,34 +23,24 @@ Model these values once the data source is known:
 Do not hardcode IP addresses, usernames, passwords, or register numbers here.
 Use placeholders until the actual device documentation has been verified.
 
+The `growatt.yaml` package keeps the first version practical by exposing
+template sensors that can fall back to manual helper values when a raw local or
+cloud entity is not available yet.
+
 ## Balcony PV
 
 Treat the 800 W balcony system as a separate producer because the Growatt system does not account for it.
 
 Preferred measurement options:
 
-- Shelly Plug
-- Shelly Pro 3EM
-- another compatible local meter
+- a dedicated local plug or energy meter
+- another compatible local meter with live power reporting
 
 Fallback:
 
 - the manual helper `input_number.balcony_pv_estimated_power_w`
 
 The `balcony_pv.yaml` package turns the helper into a usable sensor until a dedicated meter is available.
-
-## Shelly
-
-Use the local Shelly integration when possible.
-Prepare entity placeholders for:
-
-- SG-Ready contact 1
-- SG-Ready contact 2
-- relay state
-- device availability
-
-Do not automatically enable heat pump control.
-The current files only prepare the logical structure for later automation work.
 
 ## Dimplex LAW-14ITR / WPM Touch / NWPM Touch
 

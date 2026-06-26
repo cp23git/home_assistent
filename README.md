@@ -8,7 +8,7 @@ This repository provides a production-ready Home Assistant Core deployment for a
 - persistent config handling through a Synology shared folder
 - controlled backup, update, healthcheck, and rollback scripts
 - a minimal Home Assistant base configuration
-- package placeholders for Growatt, balcony PV, Shelly, and heat pump integration work
+- package placeholders for Growatt, balcony PV, and heat pump integration work
 - deployment and troubleshooting documentation
 
 ## Quick start
@@ -16,10 +16,10 @@ This repository provides a production-ready Home Assistant Core deployment for a
 1. Create a Synology shared folder such as `/volume1/docker/homeassistant/config`.
 2. Copy `.env.example` to `.env` and adjust paths if needed.
 3. Ensure Docker or Container Manager is installed on the Synology NAS.
-4. Deploy the stack from the repository root:
+4. Deploy and sync the config from the repository root:
 
 ```sh
-docker compose up -d
+./scripts/deploy.sh
 ```
 
 5. Open Home Assistant at `http://<synology-ip>:8123`.
@@ -43,6 +43,7 @@ Use `scripts/update-homeassistant.sh` instead of blind auto-updates. The update 
 ## Repository layout
 
 - `homeassistant/` holds the configuration used as the starting point for the Home Assistant setup.
+- `scripts/sync-config.sh` copies the repository configuration into the persistent Synology config path.
 - `scripts/` holds operational scripts for deploy, backup, update, healthcheck, and rollback.
 - `docs/` holds the Synology and integration guidance.
 

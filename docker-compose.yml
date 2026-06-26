@@ -4,8 +4,8 @@ services:
     container_name: homeassistant
     restart: unless-stopped
     network_mode: host
-    # Host networking keeps mDNS, SSDP, Shelly discovery, and other local
-    # integrations working reliably on Synology.
+    # Host networking keeps mDNS, SSDP, and other local integrations working
+    # reliably on Synology.
     environment:
       TZ: ${TZ:-Europe/Berlin}
     volumes:

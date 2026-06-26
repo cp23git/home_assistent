@@ -1,51 +1,162 @@
 # Placeholder sensors for Growatt. Replace the *_raw entity IDs with the actual
 # local or cloud integration entities once the device access method has been
-# chosen and verified.
+# chosen and verified. The helper inputs keep the first version usable even when
+# the raw integration is not present yet.
+
+input_select:
+  growatt_data_source:
+    name: Growatt Data Source
+    options:
+      - local_modbus
+      - growatt_cloud
+      - manual_fallback
+    initial: manual_fallback
+    icon: mdi:solar-power
+
+input_number:
+  growatt_pv_power_override_w:
+    name: Growatt PV Power Override
+    min: 0
+    max: 20000
+    step: 1
+    unit_of_measurement: W
+  growatt_battery_soc_override_percent:
+    name: Growatt Battery SoC Override
+    min: 0
+    max: 100
+    step: 1
+    unit_of_measurement: "%"
+  growatt_battery_power_override_w:
+    name: Growatt Battery Power Override
+    min: -20000
+    max: 20000
+    step: 1
+    unit_of_measurement: W
+  growatt_grid_import_override_w:
+    name: Growatt Grid Import Override
+    min: 0
+    max: 20000
+    step: 1
+    unit_of_measurement: W
+  growatt_grid_export_override_w:
+    name: Growatt Grid Export Override
+    min: 0
+    max: 20000
+    step: 1
+    unit_of_measurement: W
+  growatt_house_consumption_override_w:
+    name: Growatt House Consumption Override
+    min: 0
+    max: 30000
+    step: 1
+    unit_of_measurement: W
+  growatt_meter_power_override_w:
+    name: Growatt Meter Power Override
+    min: -30000
+    max: 30000
+    step: 1
+    unit_of_measurement: W
+
+input_text:
+  growatt_inverter_status_override:
+    name: Growatt Inverter Status Override
+    max: 64
 
 template:
   - sensor:
+      - name: Growatt Data Source
+        unique_id: growatt_data_source_text
+        state: "{{ states('input_select.growatt_data_source') }}"
       - name: Growatt PV Power
         unique_id: growatt_pv_power_w
-        state: "{{ states('sensor.growatt_pv_power_raw') | float(0) | round(0) }}"
+        state: >
+          {% set raw = states('sensor.growatt_pv_power_raw') %}
+          {% if raw in ['unknown', 'unavailable', 'none', ''] %}
+            {{ states('input_number.growatt_pv_power_override_w') | float(0) | round(0) }}
+          {% else %}
+            {{ raw | float(0) | round(0) }}
+          {% endif %}
         unit_of_measurement: W
         device_class: power
         state_class: measurement
       - name: Growatt Battery SoC
         unique_id: growatt_battery_soc_percent
-        state: "{{ states('sensor.growatt_battery_soc_raw') | float(0) | round(0) }}"
+        state: >
+          {% set raw = states('sensor.growatt_battery_soc_raw') %}
+          {% if raw in ['unknown', 'unavailable', 'none', ''] %}
+            {{ states('input_number.growatt_battery_soc_override_percent') | float(0) | round(0) }}
+          {% else %}
+            {{ raw | float(0) | round(0) }}
+          {% endif %}
         unit_of_measurement: "%"
         device_class: battery
         state_class: measurement
       - name: Growatt Battery Power
         unique_id: growatt_battery_power_w
-        state: "{{ states('sensor.growatt_battery_power_raw') | float(0) | round(0) }}"
+        state: >
+          {% set raw = states('sensor.growatt_battery_power_raw') %}
+          {% if raw in ['unknown', 'unavailable', 'none', ''] %}
+            {{ states('input_number.growatt_battery_power_override_w') | float(0) | round(0) }}
+          {% else %}
+            {{ raw | float(0) | round(0) }}
+          {% endif %}
         unit_of_measurement: W
         device_class: power
         state_class: measurement
       - name: Growatt Grid Import
         unique_id: growatt_grid_import_w
-        state: "{{ states('sensor.growatt_grid_import_raw') | float(0) | round(0) }}"
+        state: >
+          {% set raw = states('sensor.growatt_grid_import_raw') %}
+          {% if raw in ['unknown', 'unavailable', 'none', ''] %}
+            {{ states('input_number.growatt_grid_import_override_w') | float(0) | round(0) }}
+          {% else %}
+            {{ raw | float(0) | round(0) }}
+          {% endif %}
         unit_of_measurement: W
         device_class: power
         state_class: measurement
       - name: Growatt Grid Export
         unique_id: growatt_grid_export_w
-        state: "{{ states('sensor.growatt_grid_export_raw') | float(0) | round(0) }}"
+        state: >
+          {% set raw = states('sensor.growatt_grid_export_raw') %}
+          {% if raw in ['unknown', 'unavailable', 'none', ''] %}
+            {{ states('input_number.growatt_grid_export_override_w') | float(0) | round(0) }}
+          {% else %}
+            {{ raw | float(0) | round(0) }}
+          {% endif %}
         unit_of_measurement: W
         device_class: power
         state_class: measurement
       - name: Growatt House Consumption
         unique_id: growatt_house_consumption_w
-        state: "{{ states('sensor.growatt_house_consumption_raw') | float(0) | round(0) }}"
+        state: >
+          {% set raw = states('sensor.growatt_house_consumption_raw') %}
+          {% if raw in ['unknown', 'unavailable', 'none', ''] %}
+            {{ states('input_number.growatt_house_consumption_override_w') | float(0) | round(0) }}
+          {% else %}
+            {{ raw | float(0) | round(0) }}
+          {% endif %}
         unit_of_measurement: W
         device_class: power
         state_class: measurement
       - name: Growatt Inverter Status
         unique_id: growatt_inverter_status_text
-        state: "{{ states('sensor.growatt_inverter_status_raw') }}"
+        state: >
+          {% set raw = states('sensor.growatt_inverter_status_raw') %}
+          {% if raw in ['unknown', 'unavailable', 'none', ''] %}
+            {{ states('input_text.growatt_inverter_status_override') }}
+          {% else %}
+            {{ raw }}
+          {% endif %}
       - name: Growatt Meter Power
         unique_id: growatt_meter_power_w
-        state: "{{ states('sensor.growatt_meter_power_raw') | float(0) | round(0) }}"
+        state: >
+          {% set raw = states('sensor.growatt_meter_power_raw') %}
+          {% if raw in ['unknown', 'unavailable', 'none', ''] %}
+            {{ states('input_number.growatt_meter_power_override_w') | float(0) | round(0) }}
+          {% else %}
+            {{ raw | float(0) | round(0) }}
+          {% endif %}
         unit_of_measurement: W
         device_class: power
         state_class: measurement
