@@ -1,0 +1,27 @@
+# Balcony PV is treated as a separate producer because the Growatt system does
+# not know about it. The fallback helper keeps the total generation usable even
+# before a dedicated meter is installed.
+
+input_number:
+  balcony_pv_estimated_power_w:
+    name: Balcony PV Estimated Power
+    min: 0
+    max: 800
+    step: 1
+    unit_of_measurement: W
+    icon: mdi:solar-power
+
+template:
+  - sensor:
+      - name: Balcony PV Power
+        unique_id: balcony_pv_power_w
+        state: >
+          {% set measured = states('sensor.balcony_pv_power_raw') %}
+          {% if measured in ['unknown', 'unavailable', 'none', ''] %}
+            {{ states('input_number.balcony_pv_estimated_power_w') | float(0) | round(0) }}
+          {% else %}
+            {{ measured | float(0) | round(0) }}
+          {% endif %}
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement

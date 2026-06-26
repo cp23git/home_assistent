@@ -1,0 +1,70 @@
+# Example automations are disabled by default so nothing critical happens
+# automatically until the user decides to enable them.
+
+- id: notify_homeassistant_started
+  alias: Notify if Home Assistant starts
+  description: Sends a persistent notification after startup.
+  initial_state: false
+  trigger:
+    - platform: homeassistant
+      event: start
+  action:
+    - service: persistent_notification.create
+      data:
+        title: Home Assistant started
+        message: Home Assistant is up and running on Synology.
+  mode: single
+
+- id: notify_growatt_unavailable
+  alias: Notify if Growatt inverter is unavailable
+  description: Alerts when the Growatt status sensor disappears or reports unavailable.
+  initial_state: false
+  trigger:
+    - platform: state
+      entity_id: sensor.growatt_inverter_status_text
+      to:
+        - unavailable
+        - unknown
+      for: '00:10:00'
+  action:
+    - service: persistent_notification.create
+      data:
+        title: Growatt unavailable
+        message: The Growatt inverter status sensor has been unavailable for 10 minutes.
+  mode: single
+
+- id: notify_low_battery_soc
+  alias: Notify if battery SoC drops below threshold
+  description: Warns when battery state of charge stays below the configured minimum.
+  initial_state: false
+  trigger:
+    - platform: template
+      value_template: >
+        {{ states('sensor.home_battery_soc_percent') | float(0) < states('input_number.battery_min_soc_percent') | float(0) }}
+      for: '00:15:00'
+  action:
+    - service: persistent_notification.create
+      data:
+        title: Battery SoC low
+        message: Battery state of charge stayed below the configured threshold for 15 minutes.
+  mode: single
+
+- id: notify_pv_surplus_high
+  alias: Notify if PV surplus stays high
+  description: Signals sustained surplus so later heat pump logic can be enabled intentionally.
+  initial_state: false
+  trigger:
+    - platform: template
+      value_template: >
+        {{ states('sensor.home_pv_surplus_w') | float(0) > states('input_number.pv_surplus_threshold_w') | float(0) }}
+      for: '00:10:00'
+  condition:
+    - condition: state
+      entity_id: input_boolean.enable_heatpump_pv_optimization
+      state: 'on'
+  action:
+    - service: persistent_notification.create
+      data:
+        title: PV surplus detected
+        message: PV surplus has stayed above the configured threshold for 10 minutes.
+  mode: single

@@ -1,0 +1,49 @@
+# Heat pump integration placeholders. The helpers below are intentionally safe
+# and do not switch heating functions automatically.
+
+input_boolean:
+  enable_heatpump_pv_optimization:
+    name: Enable Heat Pump PV Optimization
+    icon: mdi:solar-power
+
+input_number:
+  pv_surplus_threshold_w:
+    name: PV Surplus Threshold
+    min: 0
+    max: 10000
+    step: 50
+    unit_of_measurement: W
+    icon: mdi:transmission-tower
+  battery_min_soc_percent:
+    name: Battery Minimum SoC
+    min: 0
+    max: 100
+    step: 1
+    unit_of_measurement: "%"
+    icon: mdi:battery-alert
+  heatpump_min_pause_minutes:
+    name: Heat Pump Minimum Pause Minutes
+    min: 0
+    max: 180
+    step: 5
+    unit_of_measurement: min
+    icon: mdi:timer-sand
+  heatpump_min_runtime_minutes:
+    name: Heat Pump Minimum Runtime Minutes
+    min: 0
+    max: 240
+    step: 5
+    unit_of_measurement: min
+    icon: mdi:timer-play
+
+template:
+  - sensor:
+      - name: Heat Pump Power
+        unique_id: heatpump_power_w
+        state: "{{ states('sensor.heatpump_power_raw') | float(0) | round(0) }}"
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+      - name: Heat Pump Status
+        unique_id: heatpump_status_text
+        state: "{{ states('sensor.heatpump_status_raw') }}"

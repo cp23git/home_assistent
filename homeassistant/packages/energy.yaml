@@ -1,0 +1,60 @@
+# Energy helpers that combine the main production and consumption sources.
+# These templates stay useful even while the device-specific integrations are
+# still being finalized.
+
+template:
+  - sensor:
+      - name: Total Home Generation
+        unique_id: total_home_generation_w
+        state: >
+          {% set growatt = states('sensor.growatt_pv_power_w') | float(0) %}
+          {% set balcony = states('sensor.balcony_pv_power_w') | float(0) %}
+          {{ (growatt + balcony) | round(0) }}
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+      - name: Total Home Consumption
+        unique_id: total_home_consumption_w
+        state: "{{ states('sensor.growatt_house_consumption_w') | float(0) | round(0) }}"
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+      - name: Home PV Surplus
+        unique_id: home_pv_surplus_w
+        state: >
+          {% set generation = states('sensor.total_home_generation_w') | float(0) %}
+          {% set consumption = states('sensor.total_home_consumption_w') | float(0) %}
+          {{ (generation - consumption) | round(0) }}
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+      - name: Home Grid Import
+        unique_id: home_grid_import_w
+        state: "{{ states('sensor.growatt_grid_import_w') | float(0) | round(0) }}"
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+      - name: Home Grid Export
+        unique_id: home_grid_export_w
+        state: "{{ states('sensor.growatt_grid_export_w') | float(0) | round(0) }}"
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+      - name: Home Battery SoC
+        unique_id: home_battery_soc_percent
+        state: "{{ states('sensor.growatt_battery_soc_percent') | float(0) | round(0) }}"
+        unit_of_measurement: "%"
+        device_class: battery
+        state_class: measurement
+      - name: Home Battery Power
+        unique_id: home_battery_power_w
+        state: "{{ states('sensor.growatt_battery_power_w') | float(0) | round(0) }}"
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+      - name: Home Heat Pump Consumption
+        unique_id: home_heatpump_consumption_w
+        state: "{{ states('sensor.heatpump_power_w') | float(0) | round(0) }}"
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement

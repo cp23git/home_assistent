@@ -1,0 +1,51 @@
+# Placeholder sensors for Growatt. Replace the *_raw entity IDs with the actual
+# local or cloud integration entities once the device access method has been
+# chosen and verified.
+
+template:
+  - sensor:
+      - name: Growatt PV Power
+        unique_id: growatt_pv_power_w
+        state: "{{ states('sensor.growatt_pv_power_raw') | float(0) | round(0) }}"
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+      - name: Growatt Battery SoC
+        unique_id: growatt_battery_soc_percent
+        state: "{{ states('sensor.growatt_battery_soc_raw') | float(0) | round(0) }}"
+        unit_of_measurement: "%"
+        device_class: battery
+        state_class: measurement
+      - name: Growatt Battery Power
+        unique_id: growatt_battery_power_w
+        state: "{{ states('sensor.growatt_battery_power_raw') | float(0) | round(0) }}"
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+      - name: Growatt Grid Import
+        unique_id: growatt_grid_import_w
+        state: "{{ states('sensor.growatt_grid_import_raw') | float(0) | round(0) }}"
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+      - name: Growatt Grid Export
+        unique_id: growatt_grid_export_w
+        state: "{{ states('sensor.growatt_grid_export_raw') | float(0) | round(0) }}"
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+      - name: Growatt House Consumption
+        unique_id: growatt_house_consumption_w
+        state: "{{ states('sensor.growatt_house_consumption_raw') | float(0) | round(0) }}"
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+      - name: Growatt Inverter Status
+        unique_id: growatt_inverter_status_text
+        state: "{{ states('sensor.growatt_inverter_status_raw') }}"
+      - name: Growatt Meter Power
+        unique_id: growatt_meter_power_w
+        state: "{{ states('sensor.growatt_meter_power_raw') | float(0) | round(0) }}"
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
