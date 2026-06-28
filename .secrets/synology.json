@@ -1,0 +1,10 @@
+﻿{
+    "environment":  "agent",
+    "accountMode":  "agent",
+    "configPath":  "config.local.json",
+    "pythonExe":  "C:\\Users\\benjamin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+    "createdByUser":  "benjamin-PC\\benjamin",
+    "createdAt":  "2026-06-10T12:14:19.6624805+02:00",
+    "username":  "trader",
+    "password":  "iep/lLasd3rfsdf"
+}

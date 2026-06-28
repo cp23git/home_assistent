@@ -8,8 +8,11 @@ This repository provides a production-ready Home Assistant Core deployment for a
 - persistent config handling through a Synology shared folder
 - controlled backup, update, healthcheck, and rollback scripts
 - a minimal Home Assistant base configuration
-- package placeholders for Growatt, balcony PV, and heat pump integration work
+- package placeholders and energy dashboard-ready helpers for Growatt, balcony PV, and heat pump integration work
+- additional device inventory tracking for SmartLife outlets, Meross garage control, and the Deye balcony set
 - deployment and troubleshooting documentation
+- HACS installation helper and setup notes
+- secret storage guidance for persistent credentials
 
 ## Quick start
 

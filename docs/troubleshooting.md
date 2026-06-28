@@ -33,3 +33,15 @@ If discovery still fails, verify the device itself and the NAS LAN connectivity.
 
 That is expected until the real device integration is connected.
 The package files are intentionally placeholder-based so the project remains safe and editable.
+
+## Energy dashboard values stay at zero
+
+- Confirm the live power sensors such as `sensor.total_home_generation_w` and `sensor.home_pv_surplus_w` are present.
+- Check whether the underlying Growatt, balcony PV, and heat pump raw entities exist yet.
+- If only the manual helper values are available, set the corresponding override helpers and wait for the derived sensors to update.
+
+## Heat pump status remains generic
+
+- Confirm that `sensor.heatpump_status_raw` exists if a real controller integration has already been added.
+- Otherwise use `input_text.heatpump_status_override` as the safe placeholder.
+- The repository does not switch heating functions automatically, so a generic status is expected until the live integration is connected.

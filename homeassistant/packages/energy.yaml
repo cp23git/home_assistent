@@ -2,6 +2,62 @@
 # These templates stay useful even while the device-specific integrations are
 # still being finalized.
 
+sensor:
+  - platform: integration
+    source: sensor.total_home_generation_w
+    name: Total Home Generation Energy
+    unique_id: total_home_generation_energy_kwh
+    method: left
+    unit_prefix: k
+    round: 3
+    max_sub_interval:
+      minutes: 5
+  - platform: integration
+    source: sensor.total_home_consumption_w
+    name: Total Home Consumption Energy
+    unique_id: total_home_consumption_energy_kwh
+    method: left
+    unit_prefix: k
+    round: 3
+    max_sub_interval:
+      minutes: 5
+  - platform: integration
+    source: sensor.home_grid_import_w
+    name: Home Grid Import Energy
+    unique_id: home_grid_import_energy_kwh
+    method: left
+    unit_prefix: k
+    round: 3
+    max_sub_interval:
+      minutes: 5
+  - platform: integration
+    source: sensor.home_grid_export_w
+    name: Home Grid Export Energy
+    unique_id: home_grid_export_energy_kwh
+    method: left
+    unit_prefix: k
+    round: 3
+    max_sub_interval:
+      minutes: 5
+  - platform: integration
+    source: sensor.balcony_pv_power_w
+    name: Balcony PV Energy
+    unique_id: balcony_pv_energy_kwh
+    method: left
+    unit_prefix: k
+    round: 3
+    max_sub_interval:
+      minutes: 5
+  - platform: integration
+    source: sensor.home_heatpump_consumption_w
+    name: Home Heat Pump Consumption Energy
+    unique_id: home_heatpump_consumption_energy_kwh
+    method: left
+    unit_prefix: k
+    round: 3
+    max_sub_interval:
+      minutes: 5
+
 template:
   - sensor:
       - name: Total Home Generation

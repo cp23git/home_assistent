@@ -2,6 +2,15 @@
 # not know about it. The fallback helper keeps the total generation usable even
 # before a dedicated meter is installed.
 
+input_select:
+  balcony_pv_data_source:
+    name: Balcony PV Data Source
+    options:
+      - measured
+      - estimated
+    initial: estimated
+    icon: mdi:solar-power
+
 input_number:
   balcony_pv_estimated_power_w:
     name: Balcony PV Estimated Power
@@ -16,8 +25,9 @@ template:
       - name: Balcony PV Power
         unique_id: balcony_pv_power_w
         state: >
+          {% set source = states('input_select.balcony_pv_data_source') %}
           {% set measured = states('sensor.balcony_pv_power_raw') %}
-          {% if measured in ['unknown', 'unavailable', 'none', ''] %}
+          {% if source == 'estimated' or measured in ['unknown', 'unavailable', 'none', ''] %}
             {{ states('input_number.balcony_pv_estimated_power_w') | float(0) | round(0) }}
           {% else %}
             {{ measured | float(0) | round(0) }}

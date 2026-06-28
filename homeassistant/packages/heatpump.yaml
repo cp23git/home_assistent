@@ -35,15 +35,38 @@ input_number:
     step: 5
     unit_of_measurement: min
     icon: mdi:timer-play
+  heatpump_power_override_w:
+    name: Heat Pump Power Override
+    min: 0
+    max: 20000
+    step: 1
+    unit_of_measurement: W
+
+input_text:
+  heatpump_status_override:
+    name: Heat Pump Status Override
+    max: 64
 
 template:
   - sensor:
       - name: Heat Pump Power
         unique_id: heatpump_power_w
-        state: "{{ states('sensor.heatpump_power_raw') | float(0) | round(0) }}"
+        state: >
+          {% set raw = states('sensor.heatpump_power_raw') %}
+          {% if raw in ['unknown', 'unavailable', 'none', ''] %}
+            {{ states('input_number.heatpump_power_override_w') | float(0) | round(0) }}
+          {% else %}
+            {{ raw | float(0) | round(0) }}
+          {% endif %}
         unit_of_measurement: W
         device_class: power
         state_class: measurement
       - name: Heat Pump Status
         unique_id: heatpump_status_text
-        state: "{{ states('sensor.heatpump_status_raw') }}"
+        state: >
+          {% set raw = states('sensor.heatpump_status_raw') %}
+          {% if raw in ['unknown', 'unavailable', 'none', ''] %}
+            {{ states('input_text.heatpump_status_override') }}
+          {% else %}
+            {{ raw }}
+          {% endif %}

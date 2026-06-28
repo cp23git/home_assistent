@@ -70,8 +70,9 @@ template:
       - name: Growatt PV Power
         unique_id: growatt_pv_power_w
         state: >
+          {% set source = states('input_select.growatt_data_source') %}
           {% set raw = states('sensor.growatt_pv_power_raw') %}
-          {% if raw in ['unknown', 'unavailable', 'none', ''] %}
+          {% if source == 'manual_fallback' or raw in ['unknown', 'unavailable', 'none', ''] %}
             {{ states('input_number.growatt_pv_power_override_w') | float(0) | round(0) }}
           {% else %}
             {{ raw | float(0) | round(0) }}
@@ -82,8 +83,9 @@ template:
       - name: Growatt Battery SoC
         unique_id: growatt_battery_soc_percent
         state: >
+          {% set source = states('input_select.growatt_data_source') %}
           {% set raw = states('sensor.growatt_battery_soc_raw') %}
-          {% if raw in ['unknown', 'unavailable', 'none', ''] %}
+          {% if source == 'manual_fallback' or raw in ['unknown', 'unavailable', 'none', ''] %}
             {{ states('input_number.growatt_battery_soc_override_percent') | float(0) | round(0) }}
           {% else %}
             {{ raw | float(0) | round(0) }}
@@ -94,8 +96,9 @@ template:
       - name: Growatt Battery Power
         unique_id: growatt_battery_power_w
         state: >
+          {% set source = states('input_select.growatt_data_source') %}
           {% set raw = states('sensor.growatt_battery_power_raw') %}
-          {% if raw in ['unknown', 'unavailable', 'none', ''] %}
+          {% if source == 'manual_fallback' or raw in ['unknown', 'unavailable', 'none', ''] %}
             {{ states('input_number.growatt_battery_power_override_w') | float(0) | round(0) }}
           {% else %}
             {{ raw | float(0) | round(0) }}
@@ -106,8 +109,9 @@ template:
       - name: Growatt Grid Import
         unique_id: growatt_grid_import_w
         state: >
+          {% set source = states('input_select.growatt_data_source') %}
           {% set raw = states('sensor.growatt_grid_import_raw') %}
-          {% if raw in ['unknown', 'unavailable', 'none', ''] %}
+          {% if source == 'manual_fallback' or raw in ['unknown', 'unavailable', 'none', ''] %}
             {{ states('input_number.growatt_grid_import_override_w') | float(0) | round(0) }}
           {% else %}
             {{ raw | float(0) | round(0) }}
@@ -118,8 +122,9 @@ template:
       - name: Growatt Grid Export
         unique_id: growatt_grid_export_w
         state: >
+          {% set source = states('input_select.growatt_data_source') %}
           {% set raw = states('sensor.growatt_grid_export_raw') %}
-          {% if raw in ['unknown', 'unavailable', 'none', ''] %}
+          {% if source == 'manual_fallback' or raw in ['unknown', 'unavailable', 'none', ''] %}
             {{ states('input_number.growatt_grid_export_override_w') | float(0) | round(0) }}
           {% else %}
             {{ raw | float(0) | round(0) }}
@@ -130,8 +135,9 @@ template:
       - name: Growatt House Consumption
         unique_id: growatt_house_consumption_w
         state: >
+          {% set source = states('input_select.growatt_data_source') %}
           {% set raw = states('sensor.growatt_house_consumption_raw') %}
-          {% if raw in ['unknown', 'unavailable', 'none', ''] %}
+          {% if source == 'manual_fallback' or raw in ['unknown', 'unavailable', 'none', ''] %}
             {{ states('input_number.growatt_house_consumption_override_w') | float(0) | round(0) }}
           {% else %}
             {{ raw | float(0) | round(0) }}
@@ -142,8 +148,9 @@ template:
       - name: Growatt Inverter Status
         unique_id: growatt_inverter_status_text
         state: >
+          {% set source = states('input_select.growatt_data_source') %}
           {% set raw = states('sensor.growatt_inverter_status_raw') %}
-          {% if raw in ['unknown', 'unavailable', 'none', ''] %}
+          {% if source == 'manual_fallback' or raw in ['unknown', 'unavailable', 'none', ''] %}
             {{ states('input_text.growatt_inverter_status_override') }}
           {% else %}
             {{ raw }}
@@ -151,8 +158,9 @@ template:
       - name: Growatt Meter Power
         unique_id: growatt_meter_power_w
         state: >
+          {% set source = states('input_select.growatt_data_source') %}
           {% set raw = states('sensor.growatt_meter_power_raw') %}
-          {% if raw in ['unknown', 'unavailable', 'none', ''] %}
+          {% if source == 'manual_fallback' or raw in ['unknown', 'unavailable', 'none', ''] %}
             {{ states('input_number.growatt_meter_power_override_w') | float(0) | round(0) }}
           {% else %}
             {{ raw | float(0) | round(0) }}
