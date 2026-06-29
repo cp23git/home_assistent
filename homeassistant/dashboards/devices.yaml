@@ -7,8 +7,8 @@ views:
     max_columns: 3
     badges:
       - entity: cover.meross_garage_door
-      - entity: switch.smartlife_primary_outlet
-      - entity: sensor.home_heatpump_consumption_w
+      - entity: switch.pc_steckdose_1
+      - entity: sensor.pc_leistung
     sections:
       - type: grid
         cards:
@@ -16,8 +16,8 @@ views:
             content: >
               ## Geraete
 
-              Garage, Steckdosen und Balkonkraftwerk liegen hier in einer ruhigen
-              Bedienseite mit klaren Schnellaktionen.
+              Garage, Steckdose, Balkon-PV und Waermepumpe liegen hier in einer
+              ruhigen Bedienseite mit klaren Schnellaktionen.
           - type: heading
             heading: Schnellzugriff
           - type: button
@@ -32,13 +32,19 @@ views:
           - type: button
             name: SmartLife Steckdose
             icon: mdi:power-socket-eu
-            entity: switch.smartlife_primary_outlet
+            entity: switch.pc_steckdose_1
             tap_action:
               action: toggle
           - type: button
             name: Balkon PV
             icon: mdi:solar-power-variant
-            entity: sensor.balcony_pv_power_w
+            entity: sensor.fnpaf5n02h_ausgangsleistung
+            tap_action:
+              action: more-info
+          - type: button
+            name: Waermepumpe
+            icon: mdi:heat-pump
+            entity: sensor.1_warmepumpe_wasser_leistung
             tap_action:
               action: more-info
       - type: grid
@@ -49,23 +55,29 @@ views:
             entities:
               - entity: cover.meross_garage_door
                 name: Meross Garagentor
-              - entity: switch.smartlife_primary_outlet
+              - entity: switch.pc_steckdose_1
                 name: SmartLife Steckdose
-              - entity: sensor.home_heatpump_consumption_w
+              - entity: sensor.pc_leistung
+                name: SmartLife Leistung
+              - entity: sensor.1_warmepumpe_wasser_leistung
                 name: Waermepumpe
-              - entity: sensor.total_home_supply_w
-                name: Stromsumme
+              - entity: binary_sensor.solarman_inverter_connection
+                name: Solarman Verbindung
+              - entity: sensor.solarman_inverter_total_production
+                name: Solarman Gesamtproduktion
       - type: grid
         cards:
           - type: heading
             heading: Quellenwahl
           - type: entities
             entities:
+              - entity: input_select.balcony_pv_data_source
+                name: Balkon PV Quelle
               - entity: input_select.smartlife_data_source
                 name: SmartLife Quelle
               - entity: input_select.meross_garage_data_source
                 name: Meross Quelle
-              - entity: input_text.meross_garage_raw_entity_id
-                name: Meross Raw Entity
-              - entity: input_text.smartlife_primary_outlet_raw_entity_id
-                name: SmartLife Raw Entity
+              - entity: select.solarman_inverter_cloud
+                name: Solarman Cloud
+              - entity: input_select.growatt_data_source
+                name: Growatt Quelle

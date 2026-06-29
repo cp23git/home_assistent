@@ -6,8 +6,8 @@ views:
     type: sections
     max_columns: 3
     badges:
-      - entity: sensor.total_home_supply_w
-      - entity: sensor.home_pv_surplus_w
+      - entity: sensor.fnpaf5n02h_ausgangsleistung
+      - entity: sensor.pc_leistung
       - entity: switch.smartlife_primary_outlet
       - entity: cover.meross_garage_door
     sections:
@@ -37,30 +37,33 @@ views:
             entity: switch.smartlife_primary_outlet
             name: SmartLife Steckdose
           - type: tile
-            entity: sensor.total_home_supply_w
-            name: Alle Quellen
+            entity: sensor.fnpaf5n02h_ausgangsleistung
+            name: Balkon PV
           - type: tile
-            entity: sensor.home_pv_surplus_w
-            name: PV Ueberschuss
+            entity: sensor.1_warmepumpe_wasser_leistung
+            name: Waermepumpe
       - type: grid
         cards:
           - type: heading
             heading: Energie auf einen Blick
           - type: tile
-            entity: sensor.growatt_pv_power_w
-            name: Growatt PV
+            entity: sensor.fnpaf5n02h_eigene_leistung
+            name: Eigene Leistung
           - type: tile
-            entity: sensor.balcony_pv_power_w
-            name: Balkon PV
+            entity: sensor.fnpaf5n02h_ladezustand_soc
+            name: Batterie SoC
           - type: tile
-            entity: sensor.home_grid_import_w
+            entity: sensor.fnpaf5n02h_lokale_lastleistung
+            name: Lokale Last
+          - type: tile
+            entity: sensor.fnpaf5n02h_bezugsleistung
             name: Netzbezug
           - type: tile
-            entity: sensor.home_grid_export_w
+            entity: sensor.fnpaf5n02h_einspeiseleistung
             name: Netzeinspeisung
           - type: tile
-            entity: sensor.home_battery_soc_percent
-            name: Batterie SoC
+            entity: sensor.solarman_inverter_total_production
+            name: Gesamtproduktion
       - type: grid
         cards:
           - type: heading
@@ -69,7 +72,7 @@ views:
             title: Leistung letzte 24 Stunden
             hours_to_show: 24
             entities:
-              - sensor.total_home_supply_w
-              - sensor.total_home_generation_w
-              - sensor.home_pv_surplus_w
-              - sensor.home_grid_import_w
+              - sensor.fnpaf5n02h_ausgangsleistung
+              - sensor.pc_leistung
+              - sensor.1_warmepumpe_wasser_leistung
+              - sensor.fnpaf5n02h_lokale_lastleistung

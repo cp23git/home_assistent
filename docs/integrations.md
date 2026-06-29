@@ -56,6 +56,8 @@ The `energy.yaml` package now provides two layers:
 
 The kWh sensors are derived from the live power entities so the setup stays useful before any device-specific energy counters are added.
 The `sensor.total_home_supply_w` helper combines Growatt PV, the Deye balcony inverter, and grid import so the dashboards can show the three-source power sum in one place.
+The live dashboards now prefer actual entity IDs that currently exist in Home Assistant, for example `sensor.fnpaf5n02h_ausgangsleistung`, `sensor.fnpaf5n02h_eigene_leistung`, `sensor.pc_leistung`, `sensor.1_warmepumpe_wasser_leistung`, `switch.pc_steckdose_1`, and `cover.meross_garage_door`.
+The helper sensors remain available as a fallback layer, but they should not be the only dashboard source anymore.
 
 ## Heat pump placeholders
 

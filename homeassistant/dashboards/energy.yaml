@@ -6,10 +6,10 @@ views:
     type: sections
     max_columns: 3
     badges:
-      - entity: sensor.total_home_supply_w
-      - entity: sensor.total_home_generation_w
-      - entity: sensor.home_battery_soc_percent
-      - entity: sensor.home_grid_import_w
+      - entity: sensor.fnpaf5n02h_ausgangsleistung
+      - entity: sensor.fnpaf5n02h_eigene_leistung
+      - entity: sensor.fnpaf5n02h_ladezustand_soc
+      - entity: sensor.fnpaf5n02h_bezugsleistung
     sections:
       - type: grid
         cards:
@@ -17,42 +17,44 @@ views:
             content: >
               ## Energiefluss
 
-              Die Seite zeigt die drei Erzeuger zusammen, dazu Verbrauch,
+              Die Seite zeigt die live gemessenen Energiequellen, dazu Verbrauch,
               Netzfluss und Batteriestand in einer ruhigen, klaren Ansicht.
           - type: heading
             heading: Uebersicht
           - type: tile
-            entity: sensor.total_home_supply_w
-            name: Alle Quellen
+            entity: sensor.fnpaf5n02h_ausgangsleistung
+            name: Aktuelle Ausgangsleistung
           - type: tile
-            entity: sensor.total_home_generation_w
-            name: Eigene Erzeugung
+            entity: sensor.fnpaf5n02h_eigene_leistung
+            name: Eigene Leistung
           - type: tile
-            entity: sensor.home_pv_surplus_w
-            name: PV Ueberschuss
+            entity: sensor.fnpaf5n02h_ladezustand_soc
+            name: Batterie SoC
           - type: tile
-            entity: sensor.home_grid_import_w
+            entity: sensor.fnpaf5n02h_bezugsleistung
             name: Netzbezug
           - type: tile
-            entity: sensor.home_grid_export_w
+            entity: sensor.fnpaf5n02h_einspeiseleistung
             name: Netzeinspeisung
           - type: tile
-            entity: sensor.home_battery_soc_percent
-            name: Batterie SoC
+            entity: sensor.fnpaf5n02h_lokale_lastleistung
+            name: Lokale Last
       - type: grid
         cards:
           - type: heading
             heading: Energiequellen
           - type: entities
             entities:
-              - entity: sensor.growatt_pv_power_w
-                name: Growatt PV
-              - entity: sensor.balcony_pv_power_w
-                name: Balkon PV
-              - entity: sensor.home_heatpump_consumption_w
-                name: Waermepumpe
-              - entity: sensor.total_home_consumption_w
-                name: Hausverbrauch
+              - entity: sensor.solarman_inverter_total_production
+                name: Inverter Gesamtproduktion
+              - entity: sensor.pc_leistung
+                name: SmartLife Leistung
+              - entity: sensor.1_warmepumpe_wasser_leistung
+                name: Waermepumpe Leistung
+              - entity: sensor.4_pv_oben_leistung
+                name: PV oben Leistung
+              - entity: sensor.terrasse_total_ausgangsleistung
+                name: Terrasse Gesamtleistung
       - type: grid
         cards:
           - type: heading
@@ -61,8 +63,8 @@ views:
             title: Leistung letzte 24 Stunden
             hours_to_show: 24
             entities:
-              - sensor.total_home_supply_w
-              - sensor.total_home_generation_w
-              - sensor.home_pv_surplus_w
-              - sensor.home_grid_import_w
-              - sensor.home_grid_export_w
+              - sensor.fnpaf5n02h_ausgangsleistung
+              - sensor.fnpaf5n02h_eigene_leistung
+              - sensor.fnpaf5n02h_lokale_lastleistung
+              - sensor.pc_leistung
+              - sensor.1_warmepumpe_wasser_leistung
