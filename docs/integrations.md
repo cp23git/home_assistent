@@ -40,10 +40,10 @@ Fallback and source selection:
 
 - `input_select.balcony_pv_data_source` to force the estimated helper during setup or testing
 - the manual helper `input_number.balcony_pv_estimated_power_w` for the actual fallback value
+- `input_number.balcony_pv_module_nameplate_power_w` documents the 860 W module set
+- `input_number.balcony_pv_inverter_limit_w` documents the 800 W Deye inverter limit
 
 The `balcony_pv.yaml` package turns the helper into a usable sensor until a dedicated meter is available.
-
-The current balcony setup should be documented against the actual hardware so the 860 W module set and the 800 W inverter limit stay explicit in the project.
 
 ## Energy dashboard readiness
 
@@ -66,9 +66,9 @@ The `heatpump.yaml` package follows the same safe pattern as the Growatt helpers
 
 The user also has these device groups that still need explicit integration decisions:
 
-- SmartLife outlets
-- Meross garage door opener
-- 860 W balcony set with Deye 800 W inverter
+- SmartLife outlets, likely via Tuya local/cloud or another HACS-backed integration
+- Meross garage door opener, likely via the official Meross integration or Meross LAN
+- 860 W balcony set with Deye 800 W inverter, already represented in the balcony PV package
 
 Track them in [`docs/device-inventory.md`](device-inventory.md) before adding packages or automations.
 

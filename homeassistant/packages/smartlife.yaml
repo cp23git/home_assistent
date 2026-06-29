@@ -1,0 +1,56 @@
+# SmartLife outlets are modeled as a safe placeholder so the repository can
+# keep credentials and device state separate from the deployment mechanics.
+
+input_select:
+  smartlife_data_source:
+    name: SmartLife Data Source
+    options:
+      - tuya_local
+      - tuya_cloud
+      - manual_fallback
+    initial: manual_fallback
+    icon: mdi:power-socket-eu
+
+input_boolean:
+  smartlife_primary_outlet_manual_state:
+    name: SmartLife Primary Outlet Manual State
+    icon: mdi:power-socket-eu
+
+template:
+  - switch:
+      - name: SmartLife Primary Outlet
+        unique_id: smartlife_primary_outlet
+        state: >
+          {% set source = states('input_select.smartlife_data_source') %}
+          {% set raw = states('switch.smartlife_primary_outlet_raw') %}
+          {% if source == 'manual_fallback' or raw in ['unknown', 'unavailable', 'none', ''] %}
+            {{ states('input_boolean.smartlife_primary_outlet_manual_state') }}
+          {% else %}
+            {{ raw == 'on' }}
+          {% endif %}
+        availability: >
+          {{ states('input_select.smartlife_data_source') in ['tuya_local', 'tuya_cloud', 'manual_fallback'] }}
+        turn_on:
+          - choose:
+              - conditions: >
+                  {{ states('input_select.smartlife_data_source') == 'manual_fallback' or states('switch.smartlife_primary_outlet_raw') in ['unknown', 'unavailable', 'none', ''] }}
+                sequence:
+                  - service: input_boolean.turn_on
+                    target:
+                      entity_id: input_boolean.smartlife_primary_outlet_manual_state
+            default:
+              - service: switch.turn_on
+                target:
+                  entity_id: switch.smartlife_primary_outlet_raw
+        turn_off:
+          - choose:
+              - conditions: >
+                  {{ states('input_select.smartlife_data_source') == 'manual_fallback' or states('switch.smartlife_primary_outlet_raw') in ['unknown', 'unavailable', 'none', ''] }}
+                sequence:
+                  - service: input_boolean.turn_off
+                    target:
+                      entity_id: input_boolean.smartlife_primary_outlet_manual_state
+            default:
+              - service: switch.turn_off
+                target:
+                  entity_id: switch.smartlife_primary_outlet_raw

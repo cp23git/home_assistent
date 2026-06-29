@@ -1,17 +1,32 @@
 # Balcony PV is treated as a separate producer because the Growatt system does
-# not know about it. The fallback helper keeps the total generation usable even
-# before a dedicated meter is installed.
+# not know about it. This package now models the Deye 800 W inverter and the
+# 860 W balcony set as one local producer with a safe manual fallback.
 
 input_select:
   balcony_pv_data_source:
     name: Balcony PV Data Source
     options:
-      - measured
+      - deye_local
+      - external_meter
       - estimated
     initial: estimated
     icon: mdi:solar-power
 
 input_number:
+  balcony_pv_module_nameplate_power_w:
+    name: Balcony PV Module Nameplate Power
+    min: 0
+    max: 2000
+    step: 1
+    unit_of_measurement: W
+    icon: mdi:solar-panel
+  balcony_pv_inverter_limit_w:
+    name: Balcony PV Inverter Limit
+    min: 0
+    max: 1000
+    step: 1
+    unit_of_measurement: W
+    icon: mdi:current-ac
   balcony_pv_estimated_power_w:
     name: Balcony PV Estimated Power
     min: 0

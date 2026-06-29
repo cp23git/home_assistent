@@ -1,0 +1,74 @@
+# Meross garage control is modeled as a safe placeholder so the door state can
+# be tracked without depending on the final integration path yet.
+
+input_select:
+  meross_garage_data_source:
+    name: Meross Garage Data Source
+    options:
+      - meross_local
+      - meross_cloud
+      - manual_fallback
+    initial: manual_fallback
+    icon: mdi:garage
+  meross_garage_manual_state:
+    name: Meross Garage Manual State
+    options:
+      - open
+      - closed
+      - opening
+      - closing
+      - unknown
+    initial: closed
+    icon: mdi:garage
+
+template:
+  - cover:
+      - name: Meross Garage Door
+        unique_id: meross_garage_door
+        device_class: garage
+        state: >
+          {% set source = states('input_select.meross_garage_data_source') %}
+          {% set raw = states('cover.meross_garage_door_raw') %}
+          {% if source == 'manual_fallback' or raw in ['unknown', 'unavailable', 'none', ''] %}
+            {% set manual = states('input_select.meross_garage_manual_state') %}
+            {{ manual if manual in ['open', 'closed', 'opening', 'closing'] else 'unknown' }}
+          {% else %}
+            {{ raw }}
+          {% endif %}
+        open_cover:
+          - choose:
+              - conditions: >
+                  {{ states('input_select.meross_garage_data_source') == 'manual_fallback' or states('cover.meross_garage_door_raw') in ['unknown', 'unavailable', 'none', ''] }}
+                sequence:
+                  - service: input_select.select_option
+                    target:
+                      entity_id: input_select.meross_garage_manual_state
+                    data:
+                      option: open
+            default:
+              - service: cover.open_cover
+                target:
+                  entity_id: cover.meross_garage_door_raw
+        close_cover:
+          - choose:
+              - conditions: >
+                  {{ states('input_select.meross_garage_data_source') == 'manual_fallback' or states('cover.meross_garage_door_raw') in ['unknown', 'unavailable', 'none', ''] }}
+                sequence:
+                  - service: input_select.select_option
+                    target:
+                      entity_id: input_select.meross_garage_manual_state
+                    data:
+                      option: closed
+            default:
+              - service: cover.close_cover
+                target:
+                  entity_id: cover.meross_garage_door_raw
+        stop_cover:
+          - choose:
+              - conditions: >
+                  {{ states('input_select.meross_garage_data_source') == 'manual_fallback' or states('cover.meross_garage_door_raw') in ['unknown', 'unavailable', 'none', ''] }}
+                sequence: []
+            default:
+              - service: cover.stop_cover
+                target:
+                  entity_id: cover.meross_garage_door_raw
