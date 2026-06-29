@@ -15,6 +15,8 @@ cd "$ROOT_DIR"
 
 : "${HA_CONFIG_PATH:=/volume1/docker/homeassistant/config}"
 : "${BACKUP_DIR:=$ROOT_DIR/backups}"
+SECRETS_FILE="$HA_CONFIG_PATH/secrets.yaml"
+SECRETS_BACKUP=''
 
 resolve_docker() {
   if command -v docker >/dev/null 2>&1; then
@@ -91,9 +93,17 @@ fi
 
 printf 'Restoring backup: %s\n' "$backup"
 mkdir -p "$HA_CONFIG_PATH"
+if [ -f "$SECRETS_FILE" ]; then
+  SECRETS_BACKUP=$(mktemp "${TMPDIR:-/tmp}/homeassistant-secrets.XXXXXX")
+  cp "$SECRETS_FILE" "$SECRETS_BACKUP"
+fi
 compose -f "$ROOT_DIR/docker-compose.yml" down || true
 find "$HA_CONFIG_PATH" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
 tar -C "$HA_CONFIG_PATH" -xzf "$backup"
+if [ -n "$SECRETS_BACKUP" ] && [ -f "$SECRETS_BACKUP" ]; then
+  cp "$SECRETS_BACKUP" "$SECRETS_FILE"
+  rm -f "$SECRETS_BACKUP"
+fi
 compose -f "$ROOT_DIR/docker-compose.yml" up -d --force-recreate homeassistant
 sh "$ROOT_DIR/scripts/healthcheck.sh"
 printf '%s\n' 'Rollback completed successfully.'

@@ -8,7 +8,7 @@ Create a Synology shared folder that will hold the persistent Home Assistant dat
 - `/volume1/docker/homeassistant/backups`
 
 The config directory must remain persistent because it contains the Home Assistant database, dashboards, automations, package files, `.storage` data, and `secrets.yaml`.
-Store credentials such as Growatt or SmartLife logins in the same persistent config directory as `secrets.yaml` so they survive restarts. The sync script preserves that file when copying the repository config into place.
+Store credentials such as Growatt or SmartLife logins in the same persistent config directory as `secrets.yaml` so they survive restarts. The sync script preserves that file when copying the repository config into place, and rollback does the same before restoring a backup.
 
 ## Container Manager or Docker Compose
 

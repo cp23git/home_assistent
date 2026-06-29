@@ -10,6 +10,7 @@ Use `/volume1/docker/homeassistant/config/secrets.yaml` on Synology.
 That file stays on the NAS shared folder, so it survives container restarts
 and is not touched by the repository sync step. The sync script backs it up
 before copying the repository config and restores it afterwards.
+The rollback script applies the same protection before restoring a backup.
 
 ## Example values
 
