@@ -15,6 +15,7 @@ placeholder package.
 
 - likely paths are the official Meross integration or Meross LAN via HACS
 - the template now accepts a configurable raw cover entity once the live Meross entity is known
+- on the current live setup only the template cover exists; no separate Meross garage `cover.*` entity is registered yet
 - capture the exact model number and whether the unit exposes a full cover entity
 - confirm whether a local integration path is available before relying on cloud access
 - keep the door state, command, and any safety sensor separate in the final setup
