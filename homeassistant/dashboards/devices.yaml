@@ -1,0 +1,66 @@
+title: Geraete
+views:
+  - title: Geraete
+    path: geraete
+    icon: mdi:devices
+    type: sections
+    max_columns: 3
+    badges:
+      - entity: cover.meross_garage_door
+      - entity: switch.smartlife_primary_outlet
+      - entity: sensor.home_heatpump_consumption_w
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Schnellzugriff
+          - type: button
+            name: Garagentor oeffnen
+            icon: mdi:garage-open
+            entity: cover.meross_garage_door
+            tap_action:
+              action: call-service
+              service: cover.open_cover
+              target:
+                entity_id: cover.meross_garage_door
+          - type: button
+            name: SmartLife Steckdose
+            icon: mdi:power-socket-eu
+            entity: switch.smartlife_primary_outlet
+            tap_action:
+              action: toggle
+          - type: button
+            name: Balkon PV
+            icon: mdi:solar-power-variant
+            entity: sensor.balcony_pv_power_w
+            tap_action:
+              action: more-info
+      - type: grid
+        cards:
+          - type: heading
+            heading: Status
+          - type: entities
+            entities:
+              - entity: cover.meross_garage_door
+                name: Meross Garagentor
+              - entity: switch.smartlife_primary_outlet
+                name: SmartLife Steckdose
+              - entity: sensor.home_heatpump_consumption_w
+                name: Waermepumpe
+              - entity: sensor.total_home_supply_w
+                name: Stromsumme
+      - type: grid
+        cards:
+          - type: heading
+            heading: Datenquellen
+          - type: entities
+            title: Quellenwahl
+            entities:
+              - entity: input_select.smartlife_data_source
+                name: SmartLife Quelle
+              - entity: input_select.meross_garage_data_source
+                name: Meross Quelle
+              - entity: input_text.meross_garage_raw_entity_id
+                name: Meross Raw Entity
+              - entity: input_text.smartlife_primary_outlet_raw_entity_id
+                name: SmartLife Raw Entity

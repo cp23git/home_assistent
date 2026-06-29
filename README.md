@@ -11,7 +11,7 @@ This repository provides a production-ready Home Assistant Core deployment for a
 - package placeholders and energy dashboard-ready helpers for Growatt, balcony PV, and heat pump integration work
 - additional device inventory tracking for SmartLife outlets, Meross garage control, and the Deye balcony set
 - deployment and troubleshooting documentation
-- versioned Home and Energy dashboards with a garage opener button and power sum view
+- versioned Home, Energy, and Devices dashboards with a garage opener button and power sum view
 - HACS installation helper and setup notes
 - secret storage guidance for persistent credentials
 

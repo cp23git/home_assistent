@@ -5,9 +5,15 @@ views:
     icon: mdi:home-analytics
     type: sections
     max_columns: 3
+    badges:
+      - entity: cover.meross_garage_door
+      - entity: switch.smartlife_primary_outlet
+      - entity: sensor.total_home_supply_w
     sections:
       - type: grid
         cards:
+          - type: heading
+            heading: Schnellzugriff
           - type: button
             name: Garagentor oeffnen
             icon: mdi:garage-open
@@ -31,8 +37,9 @@ views:
             name: PV Ueberschuss
       - type: grid
         cards:
+          - type: heading
+            heading: Wichtige Werte
           - type: entities
-            title: Wichtige Werte
             entities:
               - entity: sensor.total_home_generation_w
                 name: Gesamt-Erzeugung
@@ -48,6 +55,8 @@ views:
                 name: Batterie SoC
       - type: grid
         cards:
+          - type: heading
+            heading: Verlauf
           - type: history-graph
             title: Leistung letzte 24 Stunden
             hours_to_show: 24

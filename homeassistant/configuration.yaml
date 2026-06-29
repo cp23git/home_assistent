@@ -26,3 +26,11 @@ lovelace:
       require_admin: false
       url_path: energie
       filename: dashboards/energy.yaml
+    devices-dashboard:
+      mode: yaml
+      title: Geraete
+      icon: mdi:devices
+      show_in_sidebar: true
+      require_admin: false
+      url_path: geraete
+      filename: dashboards/devices.yaml
