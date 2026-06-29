@@ -42,6 +42,7 @@ Use `scripts/update-homeassistant.sh` instead of blind auto-updates. The update 
 - Do not expose Home Assistant directly to the internet.
 - Use LAN access first, or add Home Assistant Cloud, VPN, or a properly protected reverse proxy later.
 - Do not store secrets in Git. Keep them in `.env`, `secrets.yaml`, or Synology-managed secret storage.
+- The deploy sync preserves an existing `secrets.yaml` in the persistent config directory.
 
 ## Repository layout
 
