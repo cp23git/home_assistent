@@ -1,5 +1,8 @@
 # Dashboards
 
-This folder is reserved for optional YAML dashboards or exported dashboard assets.
-Energy-focused templates can live here if a future Lovelace dashboard should be versioned alongside the config.
-Default Home Assistant UI dashboards remain the recommended starting point.
+This folder contains the versioned YAML dashboards used by the Synology setup.
+
+- `home.yaml` provides the main overview with the garage door button and quick device tiles.
+- `energy.yaml` provides the energy page with the three-source power sum and supporting graphs.
+
+Home Assistant loads them through the `lovelace` section in `configuration.yaml`.

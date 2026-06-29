@@ -1,0 +1,67 @@
+title: Energie
+views:
+  - title: Ueberblick
+    path: energie
+    icon: mdi:solar-power
+    type: sections
+    max_columns: 3
+    sections:
+      - type: grid
+        cards:
+          - type: tile
+            entity: sensor.total_home_supply_w
+            name: Alle 3 Quellen
+          - type: tile
+            entity: sensor.total_home_generation_w
+            name: Erzeugung gesamt
+          - type: tile
+            entity: sensor.home_grid_import_w
+            name: Netzbezug
+          - type: tile
+            entity: sensor.home_grid_export_w
+            name: Einspeisung
+      - type: grid
+        cards:
+          - type: gauge
+            entity: sensor.home_pv_surplus_w
+            name: PV Ueberschuss
+            min: -3000
+            max: 3000
+            severity:
+              green: 0
+              yellow: -500
+              red: -1500
+          - type: gauge
+            entity: sensor.home_battery_soc_percent
+            name: Batterie SoC
+            min: 0
+            max: 100
+            severity:
+              green: 60
+              yellow: 30
+              red: 10
+      - type: grid
+        cards:
+          - type: entities
+            title: Quellen im Detail
+            entities:
+              - entity: sensor.growatt_pv_power_w
+                name: Growatt PV
+              - entity: sensor.balcony_pv_power_w
+                name: Deye Balkon
+              - entity: sensor.home_grid_import_w
+                name: Netzbezug
+              - entity: sensor.total_home_supply_w
+                name: Summe aller Quellen
+              - entity: sensor.home_heatpump_consumption_w
+                name: Waermepumpe
+      - type: grid
+        cards:
+          - type: history-graph
+            title: Energiefluss letzte 24 Stunden
+            hours_to_show: 24
+            entities:
+              - sensor.growatt_pv_power_w
+              - sensor.balcony_pv_power_w
+              - sensor.home_grid_import_w
+              - sensor.total_home_supply_w

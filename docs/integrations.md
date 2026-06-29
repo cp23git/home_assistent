@@ -55,6 +55,7 @@ The `energy.yaml` package now provides two layers:
 - integrated kWh sensors for Home Assistant's Energy dashboard and longer-term tracking
 
 The kWh sensors are derived from the live power entities so the setup stays useful before any device-specific energy counters are added.
+The `sensor.total_home_supply_w` helper combines Growatt PV, the Deye balcony inverter, and grid import so the dashboards can show the three-source power sum in one place.
 
 ## Heat pump placeholders
 

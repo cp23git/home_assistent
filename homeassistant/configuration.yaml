@@ -8,3 +8,21 @@ script: !include scripts.yaml
 scene: !include scenes.yaml
 homeassistant:
   packages: !include_dir_named packages
+lovelace:
+  dashboards:
+    home-dashboard:
+      mode: yaml
+      title: Zuhause
+      icon: mdi:home-analytics
+      show_in_sidebar: true
+      require_admin: false
+      url_path: zuhause
+      filename: dashboards/home.yaml
+    energy-dashboard:
+      mode: yaml
+      title: Energie
+      icon: mdi:solar-power
+      show_in_sidebar: true
+      require_admin: false
+      url_path: energie
+      filename: dashboards/energy.yaml

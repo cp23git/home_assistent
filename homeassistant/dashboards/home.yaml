@@ -1,0 +1,58 @@
+title: Zuhause
+views:
+  - title: Ueberblick
+    path: home
+    icon: mdi:home-analytics
+    type: sections
+    max_columns: 3
+    sections:
+      - type: grid
+        cards:
+          - type: button
+            name: Garagentor oeffnen
+            icon: mdi:garage-open
+            entity: cover.meross_garage_door
+            tap_action:
+              action: call-service
+              service: cover.open_cover
+              target:
+                entity_id: cover.meross_garage_door
+            hold_action:
+              action: more-info
+            show_state: false
+          - type: tile
+            entity: switch.smartlife_primary_outlet
+            name: SmartLife Steckdose
+          - type: tile
+            entity: sensor.total_home_supply_w
+            name: Alle Quellen
+          - type: tile
+            entity: sensor.home_pv_surplus_w
+            name: PV Ueberschuss
+      - type: grid
+        cards:
+          - type: entities
+            title: Wichtige Werte
+            entities:
+              - entity: sensor.total_home_generation_w
+                name: Gesamt-Erzeugung
+              - entity: sensor.growatt_pv_power_w
+                name: Growatt PV
+              - entity: sensor.balcony_pv_power_w
+                name: Balkon PV
+              - entity: sensor.home_grid_import_w
+                name: Netzbezug
+              - entity: sensor.home_grid_export_w
+                name: Netzeinspeisung
+              - entity: sensor.home_battery_soc_percent
+                name: Batterie SoC
+      - type: grid
+        cards:
+          - type: history-graph
+            title: Leistung letzte 24 Stunden
+            hours_to_show: 24
+            entities:
+              - sensor.total_home_supply_w
+              - sensor.total_home_generation_w
+              - sensor.home_pv_surplus_w
+              - sensor.home_grid_import_w

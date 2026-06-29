@@ -40,6 +40,15 @@ sensor:
     max_sub_interval:
       minutes: 5
   - platform: integration
+    source: sensor.total_home_supply_w
+    name: Total Home Supply Energy
+    unique_id: total_home_supply_energy_kwh
+    method: left
+    unit_prefix: k
+    round: 3
+    max_sub_interval:
+      minutes: 5
+  - platform: integration
     source: sensor.balcony_pv_power_w
     name: Balcony PV Energy
     unique_id: balcony_pv_energy_kwh
@@ -66,6 +75,16 @@ template:
           {% set growatt = states('sensor.growatt_pv_power_w') | float(0) %}
           {% set balcony = states('sensor.balcony_pv_power_w') | float(0) %}
           {{ (growatt + balcony) | round(0) }}
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+      - name: Total Home Supply
+        unique_id: total_home_supply_w
+        state: >
+          {% set growatt = states('sensor.growatt_pv_power_w') | float(0) %}
+          {% set balcony = states('sensor.balcony_pv_power_w') | float(0) %}
+          {% set grid_import = states('sensor.home_grid_import_w') | float(0) %}
+          {{ (growatt + balcony + grid_import) | round(0) }}
         unit_of_measurement: W
         device_class: power
         state_class: measurement
