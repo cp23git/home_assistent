@@ -95,5 +95,5 @@ compose -f "$ROOT_DIR/docker-compose.yml" down || true
 find "$HA_CONFIG_PATH" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
 tar -C "$HA_CONFIG_PATH" -xzf "$backup"
 compose -f "$ROOT_DIR/docker-compose.yml" up -d --force-recreate homeassistant
-"$ROOT_DIR/scripts/healthcheck.sh"
+sh "$ROOT_DIR/scripts/healthcheck.sh"
 printf '%s\n' 'Rollback completed successfully.'

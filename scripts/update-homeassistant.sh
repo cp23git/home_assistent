@@ -54,7 +54,7 @@ printf 'Current version: %s\n' "$current_version"
 printf 'Target image: %s\n' "$HA_IMAGE"
 
 printf '%s\n' 'Creating a pre-update backup...'
-"$ROOT_DIR/scripts/backup.sh"
+sh "$ROOT_DIR/scripts/backup.sh"
 
 printf '%s\n' 'Pulling the stable image...'
 compose -f "$ROOT_DIR/docker-compose.yml" pull homeassistant
@@ -63,7 +63,7 @@ printf '%s\n' 'Recreating the container...'
 compose -f "$ROOT_DIR/docker-compose.yml" up -d --force-recreate homeassistant
 
 printf '%s\n' 'Running healthcheck...'
-if "$ROOT_DIR/scripts/healthcheck.sh"; then
+if sh "$ROOT_DIR/scripts/healthcheck.sh"; then
   printf '%s\n' 'Update completed successfully.'
   exit 0
 fi

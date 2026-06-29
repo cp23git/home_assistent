@@ -49,7 +49,7 @@ printf 'Config path: %s\n' "$HA_CONFIG_PATH"
 mkdir -p "$BACKUP_DIR"
 
 printf '%s\n' 'Syncing Home Assistant config files...'
-"$ROOT_DIR/scripts/sync-config.sh"
+sh "$ROOT_DIR/scripts/sync-config.sh"
 
 printf '%s\n' 'Pulling the stable Home Assistant image...'
 compose -f "$ROOT_DIR/docker-compose.yml" pull homeassistant
@@ -58,6 +58,6 @@ printf '%s\n' 'Starting or recreating the container...'
 compose -f "$ROOT_DIR/docker-compose.yml" up -d --force-recreate homeassistant
 
 printf '%s\n' 'Running healthcheck...'
-"$ROOT_DIR/scripts/healthcheck.sh"
+sh "$ROOT_DIR/scripts/healthcheck.sh"
 
 printf '%s\n' 'Deployment completed successfully.'
