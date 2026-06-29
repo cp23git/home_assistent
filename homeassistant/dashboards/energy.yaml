@@ -1,6 +1,6 @@
 title: Energie
 views:
-  - title: Ueberblick
+  - title: Energie
     path: energie
     icon: mdi:solar-power
     type: sections
@@ -13,67 +13,56 @@ views:
     sections:
       - type: grid
         cards:
+          - type: markdown
+            content: >
+              ## Energiefluss
+
+              Die Seite zeigt die drei Erzeuger zusammen, dazu Verbrauch,
+              Netzfluss und Batteriestand in einer ruhigen, klaren Ansicht.
           - type: heading
-            heading: Kurzuebersicht
+            heading: Uebersicht
           - type: tile
             entity: sensor.total_home_supply_w
-            name: Alle 3 Quellen
+            name: Alle Quellen
           - type: tile
             entity: sensor.total_home_generation_w
-            name: Erzeugung gesamt
+            name: Eigene Erzeugung
+          - type: tile
+            entity: sensor.home_pv_surplus_w
+            name: PV Ueberschuss
           - type: tile
             entity: sensor.home_grid_import_w
             name: Netzbezug
           - type: tile
             entity: sensor.home_grid_export_w
-            name: Einspeisung
-      - type: grid
-        cards:
-          - type: heading
-            heading: Kennzahlen
-          - type: gauge
-            entity: sensor.home_pv_surplus_w
-            name: PV Ueberschuss
-            min: -3000
-            max: 3000
-            severity:
-              green: 0
-              yellow: -500
-              red: -1500
-          - type: gauge
+            name: Netzeinspeisung
+          - type: tile
             entity: sensor.home_battery_soc_percent
             name: Batterie SoC
-            min: 0
-            max: 100
-            severity:
-              green: 60
-              yellow: 30
-              red: 10
       - type: grid
         cards:
           - type: heading
-            heading: Quellen
+            heading: Energiequellen
           - type: entities
             entities:
               - entity: sensor.growatt_pv_power_w
                 name: Growatt PV
               - entity: sensor.balcony_pv_power_w
-                name: Deye Balkon
-              - entity: sensor.home_grid_import_w
-                name: Netzbezug
-              - entity: sensor.total_home_supply_w
-                name: Summe aller Quellen
+                name: Balkon PV
               - entity: sensor.home_heatpump_consumption_w
                 name: Waermepumpe
+              - entity: sensor.total_home_consumption_w
+                name: Hausverbrauch
       - type: grid
         cards:
           - type: heading
             heading: Verlauf
           - type: history-graph
-            title: Energiefluss letzte 24 Stunden
+            title: Leistung letzte 24 Stunden
             hours_to_show: 24
             entities:
-              - sensor.growatt_pv_power_w
-              - sensor.balcony_pv_power_w
-              - sensor.home_grid_import_w
               - sensor.total_home_supply_w
+              - sensor.total_home_generation_w
+              - sensor.home_pv_surplus_w
+              - sensor.home_grid_import_w
+              - sensor.home_grid_export_w

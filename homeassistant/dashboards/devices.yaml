@@ -14,11 +14,10 @@ views:
         cards:
           - type: markdown
             content: >
-              ## Meross Garage Status
+              ## Geraete
 
-              The garage opener is still template-backed. Enter the live `cover.*`
-              entity in the raw entity helper once Home Assistant shows the real
-              Meross device. Until then, the button reflects manual fallback state.
+              Garage, Steckdosen und Balkonkraftwerk liegen hier in einer ruhigen
+              Bedienseite mit klaren Schnellaktionen.
           - type: heading
             heading: Schnellzugriff
           - type: button
@@ -59,9 +58,8 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: Datenquellen
+            heading: Quellenwahl
           - type: entities
-            title: Quellenwahl
             entities:
               - entity: input_select.smartlife_data_source
                 name: SmartLife Quelle

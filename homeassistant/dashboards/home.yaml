@@ -6,12 +6,19 @@ views:
     type: sections
     max_columns: 3
     badges:
-      - entity: cover.meross_garage_door
-      - entity: switch.smartlife_primary_outlet
       - entity: sensor.total_home_supply_w
+      - entity: sensor.home_pv_surplus_w
+      - entity: switch.smartlife_primary_outlet
+      - entity: cover.meross_garage_door
     sections:
       - type: grid
         cards:
+          - type: markdown
+            content: >
+              ## Zuhause im Blick
+
+              Schnellzugriff auf Tor, Steckdose und Energie mit den wichtigsten
+              Werten direkt oben.
           - type: heading
             heading: Schnellzugriff
           - type: button
@@ -38,21 +45,22 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: Wichtige Werte
-          - type: entities
-            entities:
-              - entity: sensor.total_home_generation_w
-                name: Gesamt-Erzeugung
-              - entity: sensor.growatt_pv_power_w
-                name: Growatt PV
-              - entity: sensor.balcony_pv_power_w
-                name: Balkon PV
-              - entity: sensor.home_grid_import_w
-                name: Netzbezug
-              - entity: sensor.home_grid_export_w
-                name: Netzeinspeisung
-              - entity: sensor.home_battery_soc_percent
-                name: Batterie SoC
+            heading: Energie auf einen Blick
+          - type: tile
+            entity: sensor.growatt_pv_power_w
+            name: Growatt PV
+          - type: tile
+            entity: sensor.balcony_pv_power_w
+            name: Balkon PV
+          - type: tile
+            entity: sensor.home_grid_import_w
+            name: Netzbezug
+          - type: tile
+            entity: sensor.home_grid_export_w
+            name: Netzeinspeisung
+          - type: tile
+            entity: sensor.home_battery_soc_percent
+            name: Batterie SoC
       - type: grid
         cards:
           - type: heading
