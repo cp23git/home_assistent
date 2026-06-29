@@ -19,11 +19,12 @@ The exact key names depend on the integration you choose, but the pattern is:
 ```yaml
 growatt_username: your-username
 growatt_password: your-password
-smartlife_username: your-username
-smartlife_password: your-password
 meross_email: your-email@example.com
 meross_password: your-password
 ```
+
+SmartLife currently uses the existing Tuya integration and does not need a
+separate `secrets.yaml` entry in this repository setup.
 
 ## Notes
 

@@ -44,6 +44,8 @@ Fallback and source selection:
 - `input_number.balcony_pv_inverter_limit_w` documents the 800 W Deye inverter limit
 
 The `balcony_pv.yaml` package turns the helper into a usable sensor until a dedicated meter is available.
+The HACS-installed Solarman integration is now available as a live path for the Deye balcony inverter and backs the default `sensor.solarman_inverter_power` raw entity used by the balcony PV package.
+If that entity changes later, update the helper instead of hardcoding a new name into the template.
 
 ## Energy dashboard readiness
 
@@ -66,7 +68,7 @@ The `heatpump.yaml` package follows the same safe pattern as the Growatt helpers
 
 The user also has these device groups that still need explicit integration decisions:
 
-- SmartLife outlets, likely via Tuya local/cloud or another HACS-backed integration
+- SmartLife outlets, currently mapped through the existing Tuya integration
 - Meross garage door opener, likely via the official Meross integration or Meross LAN
 - 860 W balcony set with Deye 800 W inverter, already represented in the balcony PV package
 
@@ -114,4 +116,3 @@ For energy dashboard friendly sensors, use:
 - exact Dimplex register numbers
 - aggressive automation for heating
 - any internet-facing Home Assistant exposure
-
