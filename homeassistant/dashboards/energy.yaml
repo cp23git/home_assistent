@@ -6,9 +6,9 @@ views:
     type: sections
     max_columns: 3
     badges:
+      - entity: sensor.fnpaf5n02h_lokale_lastleistung
       - entity: sensor.fnpaf5n02h_ausgangsleistung
       - entity: sensor.pc_leistung
-      - entity: sensor.solarman_inverter_total_production
       - entity: sensor.fnpaf5n02h_ladezustand_soc
     sections:
       - type: grid
@@ -17,46 +17,47 @@ views:
             content: >
               ## Energiefluss
 
-              Die Seite zeigt die live gemessenen Geräte und ihre echten Werte:
-              PV, Steckdose, Batterie, Netzfluss und Produktionszähler.
+              Ganz oben siehst du den aktuellen Gesamtverbrauch. Darunter
+              liegen die echten Produzenten, Netzfluss, Batterie und die
+              wichtigsten Verbraucher aus dem Haus.
           - type: heading
             heading: Uebersicht
+          - type: tile
+            entity: sensor.fnpaf5n02h_lokale_lastleistung
+            name: Gesamtverbrauch aktuell
           - type: tile
             entity: sensor.fnpaf5n02h_ausgangsleistung
             name: PV Ausgangsleistung
           - type: tile
-            entity: sensor.fnpaf5n02h_eigene_leistung
-            name: Eigene Leistung
-          - type: tile
             entity: sensor.pc_leistung
-            name: Steckdose Leistung
-          - type: tile
-            entity: sensor.pc_energie_gesamt
-            name: Steckdose Energie gesamt
+            name: Tuya Steckdose Leistung
           - type: tile
             entity: sensor.fnpaf5n02h_ladezustand_soc
             name: Batterie SoC
           - type: tile
-            entity: sensor.solarman_inverter_total_production
-            name: Solarman Gesamtproduktion
+            entity: sensor.fnpaf5n02h_bezugsleistung
+            name: Netzbezug
+          - type: tile
+            entity: sensor.fnpaf5n02h_einspeiseleistung
+            name: Einspeisung
       - type: grid
         cards:
           - type: heading
-            heading: Energiezaehler
+            heading: Produktionszaehler
           - type: entities
             entities:
+              - entity: sensor.fnpaf5n02h_gesamtlastverbrauch_uber_lebensdauer
+                name: Gesamtverbrauch Lebensdauer
+              - entity: sensor.fnpaf5n02h_gesamte_pv_energie_uber_lebensdauer
+                name: PV Lebensdauer
               - entity: sensor.fnpaf5n02h_energie_heute
                 name: PV Energie heute
               - entity: sensor.fnpaf5n02h_systemerzeugung_heute
                 name: Systemerzeugung heute
-              - entity: sensor.fnpaf5n02h_gesamte_pv_energie_uber_lebensdauer
-                name: PV Lebensdauer
-              - entity: sensor.fnpaf5n02h_gesamtlastverbrauch_uber_lebensdauer
-                name: Lastverbrauch Lebensdauer
-              - entity: sensor.fnpaf5n02h_bezugsleistung
-                name: Netzbezug
-              - entity: sensor.fnpaf5n02h_einspeiseleistung
-                name: Netzeinspeisung
+              - entity: sensor.solarman_inverter_total_production
+                name: Solarman Gesamtproduktion
+              - entity: sensor.pc_energie_gesamt
+                name: Tuya Gesamtenergie
               - entity: sensor.1_warmepumpe_wasser_leistung
                 name: Waermepumpe Leistung
               - entity: sensor.4_pv_oben_leistung
@@ -71,9 +72,9 @@ views:
             title: Leistung letzte 24 Stunden
             hours_to_show: 24
             entities:
-              - sensor.fnpaf5n02h_ausgangsleistung
-              - sensor.fnpaf5n02h_eigene_leistung
-              - sensor.pc_leistung
               - sensor.fnpaf5n02h_lokale_lastleistung
+              - sensor.fnpaf5n02h_ausgangsleistung
+              - sensor.pc_leistung
               - sensor.1_warmepumpe_wasser_leistung
+              - sensor.4_pv_oben_leistung
               - sensor.fnpaf5n02h_bezugsleistung
