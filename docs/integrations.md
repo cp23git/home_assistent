@@ -59,13 +59,24 @@ The `sensor.total_home_supply_w` helper combines Growatt PV, the Deye balcony in
 The live dashboards now prefer actual entity IDs that currently exist in Home Assistant, for example `sensor.fnpaf5n02h_ausgangsleistung`, `sensor.fnpaf5n02h_eigene_leistung`, `sensor.pc_leistung`, `sensor.1_warmepumpe_wasser_leistung`, `switch.pc_steckdose_1`, and `cover.meross_garage_door`.
 The helper sensors remain available as a fallback layer, but they should not be the only dashboard source anymore.
 
-## Heat pump placeholders
+## Heat pump Modbus
 
-The `heatpump.yaml` package follows the same safe pattern as the Growatt helpers:
+The `heatpump.yaml` package now exposes the Dimplex/NWPM controller through a
+read-only Modbus TCP hub:
 
-- live power and status templates remain readable even if the raw entities are missing
+- hub name `dimplex`
+- host `192.168.178.34`
+- port `502`
+- unit/slave `1`
+- verified input registers: `5007`, `5167`, `5002`, `5022`, `5088`, `30`, `40`
+
+The package still follows the same safe pattern as the Growatt helpers:
+
+- live power and status templates remain readable even if one raw entity is missing
 - optional manual override helpers keep the setup usable during early integration work
 - nothing in this repository turns heating functions on or off automatically
+- write automations stay out of scope until the meaning of the live mode value
+  `43` is confirmed against the Dimplex register map
 
 ## Additional devices to map
 
@@ -84,11 +95,11 @@ so HACS can be installed cleanly once the Home Assistant container is running.
 
 ## Dimplex LAW-14ITR / WPM Touch / NWPM Touch
 
-Likely integration path:
+Current integration path:
 
-- verify whether the controller exposes Modbus TCP
-- document the controller IP address, port, unit ID, and register map
-- build against verified documentation only
+- Modbus TCP is enabled and reachable from the Home Assistant container
+- the first read-only register set has been verified live
+- dashboards show the raw Modbus values and safe text helpers
 
 Future control concepts to document later:
 
@@ -116,6 +127,6 @@ For energy dashboard friendly sensors, use:
 ## What stays intentionally out of scope for now
 
 - exact Growatt register numbers
-- exact Dimplex register numbers
 - aggressive automation for heating
+- Dimplex register writes or mode changes
 - any internet-facing Home Assistant exposure

@@ -1,5 +1,71 @@
-# Heat pump integration placeholders. The helpers below are intentionally safe
-# and do not switch heating functions automatically.
+# Heat pump integration. The helpers below are intentionally safe and do not
+# switch heating functions automatically.
+
+modbus:
+  - name: dimplex
+    type: tcp
+    host: 192.168.178.34
+    port: 502
+    delay: 0
+    timeout: 5
+    sensors:
+      - name: Dimplex Mode
+        unique_id: dimplex_mode
+        slave: 1
+        address: 5007
+        scan_interval: 10
+        input_type: input
+        data_type: uint16
+      - name: Dimplex Smart Grid
+        unique_id: dimplex_smart_grid
+        slave: 1
+        address: 5167
+        scan_interval: 10
+        input_type: input
+        data_type: uint16
+      - name: Dimplex Parallel Displacement
+        unique_id: dimplex_parallel_displacement
+        slave: 1
+        address: 5002
+        scan_interval: 10
+        input_type: input
+        data_type: uint16
+      - name: Dimplex Hot Water Target Raw
+        unique_id: dimplex_hot_water_target_raw
+        slave: 1
+        address: 5022
+        scan_interval: 10
+        input_type: input
+        data_type: uint16
+      - name: Dimplex Max Temperature Raw
+        unique_id: dimplex_max_temperature_raw
+        slave: 1
+        address: 5088
+        scan_interval: 10
+        input_type: input
+        data_type: uint16
+      - name: Dimplex Hot Water Temp
+        unique_id: dimplex_hot_water_temp
+        slave: 1
+        address: 30
+        scan_interval: 10
+        input_type: input
+        data_type: int16
+        unit_of_measurement: C
+        state_class: measurement
+        scale: 0.1
+        precision: 1
+      - name: Dimplex Hot Water Target Temp
+        unique_id: dimplex_hot_water_target_temp
+        slave: 1
+        address: 40
+        scan_interval: 10
+        input_type: input
+        data_type: int16
+        unit_of_measurement: C
+        state_class: measurement
+        scale: 0.1
+        precision: 1
 
 input_boolean:
   enable_heatpump_pv_optimization:
@@ -49,14 +115,46 @@ input_text:
 
 template:
   - sensor:
+      - name: Dimplex Mode Text
+        unique_id: dimplex_mode_text
+        state: >
+          {% set value = states('sensor.dimplex_mode') | int(-1) %}
+          {% set modes = {
+            0: 'Summer',
+            1: 'Auto',
+            2: 'Holiday',
+            3: 'Party',
+            4: 'Heat gen 2'
+          } %}
+          {% if value in modes %}
+            {{ modes[value] }}
+          {% elif value >= 0 %}
+            Modbus mode {{ value }}
+          {% else %}
+            unknown
+          {% endif %}
+        icon: mdi:heat-pump
+      - name: Dimplex Smart Grid Text
+        unique_id: dimplex_smart_grid_text
+        state: >
+          {% set value = states('sensor.dimplex_smart_grid') | int(-1) %}
+          {% if value >= 0 %}
+            Smart Grid {{ value }}
+          {% else %}
+            unknown
+          {% endif %}
+        icon: mdi:transmission-tower
       - name: Heat Pump Power
         unique_id: heatpump_power_w
         state: >
+          {% set live = states('sensor.1_warmepumpe_wasser_leistung') %}
           {% set raw = states('sensor.heatpump_power_raw') %}
-          {% if raw in ['unknown', 'unavailable', 'none', ''] %}
-            {{ states('input_number.heatpump_power_override_w') | float(0) | round(0) }}
-          {% else %}
+          {% if live not in ['unknown', 'unavailable', 'none', ''] %}
+            {{ live | float(0) | round(0) }}
+          {% elif raw not in ['unknown', 'unavailable', 'none', ''] %}
             {{ raw | float(0) | round(0) }}
+          {% else %}
+            {{ states('input_number.heatpump_power_override_w') | float(0) | round(0) }}
           {% endif %}
         unit_of_measurement: W
         device_class: power
@@ -64,9 +162,12 @@ template:
       - name: Heat Pump Status
         unique_id: heatpump_status_text
         state: >
+          {% set dimplex = states('sensor.dimplex_mode_text') %}
           {% set raw = states('sensor.heatpump_status_raw') %}
-          {% if raw in ['unknown', 'unavailable', 'none', ''] %}
-            {{ states('input_text.heatpump_status_override') }}
-          {% else %}
+          {% if dimplex not in ['unknown', 'unavailable', 'none', ''] %}
+            {{ dimplex }}
+          {% elif raw not in ['unknown', 'unavailable', 'none', ''] %}
             {{ raw }}
+          {% else %}
+            {{ states('input_text.heatpump_status_override') }}
           {% endif %}

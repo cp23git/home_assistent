@@ -33,6 +33,18 @@ placeholder package.
 
 - the live power sensor is `sensor.1_warmepumpe_wasser_leistung`
 - the heat pump helper remains available as `sensor.heat_pump_power`
+- Modbus TCP is reachable from the Home Assistant container at `192.168.178.34:502`
+- the Dimplex/NWPM Modbus hub is modeled as `dimplex` with unit/slave `1`
+- verified read-only input registers on the live controller:
+  - `5007` Dimplex mode currently returned `43`
+  - `5167` Smart Grid currently returned `11`
+  - `5002` parallel displacement currently returned `1`
+  - `5022` hot water target raw currently returned `1`
+  - `5088` max temperature raw currently returned `0`
+  - `30` hot water temperature currently returned `0`
+  - `40` hot water target temperature currently returned `0`
+- do not enable write automations for mode control until the register map and the
+  meaning of mode value `43` are confirmed
 - use the live raw sensor in dashboards until the helper is wired to a stable source
 
 ## What still needs to be chosen

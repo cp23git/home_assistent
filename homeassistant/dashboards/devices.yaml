@@ -10,6 +10,8 @@ views:
       - entity: cover.meross_garage_door
       - entity: switch.pc_steckdose_1
       - entity: sensor.pc_leistung
+      - entity: sensor.dimplex_mode_text
+      - entity: sensor.dimplex_hot_water_temp
     sections:
       - type: grid
         cards:
@@ -45,7 +47,7 @@ views:
           - type: button
             name: Waermepumpe
             icon: mdi:heat-pump
-            entity: sensor.1_warmepumpe_wasser_leistung
+            entity: sensor.dimplex_mode_text
             tap_action:
               action: more-info
       - type: grid
@@ -61,11 +63,41 @@ views:
               - entity: sensor.pc_leistung
                 name: SmartLife Leistung
               - entity: sensor.1_warmepumpe_wasser_leistung
-                name: Waermepumpe
+                name: Waermepumpe Leistung
+              - entity: sensor.heat_pump_status
+                name: Waermepumpe Status
               - entity: binary_sensor.solarman_inverter_connection
                 name: Solarman Verbindung
               - entity: sensor.solarman_inverter_total_production
                 name: Solarman Gesamtproduktion
+      - type: grid
+        cards:
+          - type: heading
+            heading: Waermepumpe Modbus
+          - type: tile
+            entity: sensor.dimplex_mode_text
+            name: Modbus Modus
+          - type: tile
+            entity: sensor.dimplex_smart_grid_text
+            name: Smart Grid
+          - type: tile
+            entity: sensor.dimplex_hot_water_temp
+            name: Warmwasser
+          - type: tile
+            entity: sensor.dimplex_hot_water_target_temp
+            name: Warmwasser Ziel
+          - type: entities
+            entities:
+              - entity: sensor.dimplex_mode
+                name: Modus Rohwert
+              - entity: sensor.dimplex_smart_grid
+                name: Smart Grid Rohwert
+              - entity: sensor.dimplex_parallel_displacement
+                name: Parallelverschiebung
+              - entity: sensor.dimplex_hot_water_target_raw
+                name: WW-Ziel Rohwert
+              - entity: sensor.dimplex_max_temperature_raw
+                name: Maximaltemperatur Rohwert
       - type: grid
         cards:
           - type: heading
