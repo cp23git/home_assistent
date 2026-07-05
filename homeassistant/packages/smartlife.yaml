@@ -8,14 +8,8 @@ input_select:
       - tuya_local
       - tuya_cloud
       - manual_fallback
-    initial: tuya_local
+    initial: manual_fallback
     icon: mdi:power-socket-eu
-
-input_text:
-  smartlife_primary_outlet_raw_entity_id:
-    name: SmartLife Primary Outlet Raw Entity ID
-    initial: switch.pc_steckdose_1
-    max: 255
 
 input_boolean:
   smartlife_primary_outlet_manual_state:
@@ -28,8 +22,7 @@ template:
         unique_id: smartlife_primary_outlet
         state: >
           {% set source = states('input_select.smartlife_data_source') %}
-          {% set raw_entity = states('input_text.smartlife_primary_outlet_raw_entity_id') %}
-          {% set raw = states(raw_entity) if raw_entity not in ['unknown', 'unavailable', 'none', ''] else 'unknown' %}
+          {% set raw = states('switch.smartlife_primary_outlet_raw') %}
           {% if source == 'manual_fallback' or raw in ['unknown', 'unavailable', 'none', ''] %}
             {{ states('input_boolean.smartlife_primary_outlet_manual_state') }}
           {% else %}
@@ -40,28 +33,24 @@ template:
         turn_on:
           - choose:
               - conditions: >
-                  {% set raw_entity = states('input_text.smartlife_primary_outlet_raw_entity_id') %}
-                  {% set raw = states(raw_entity) if raw_entity not in ['unknown', 'unavailable', 'none', ''] else 'unknown' %}
-                  {{ states('input_select.smartlife_data_source') == 'manual_fallback' or raw in ['unknown', 'unavailable', 'none', ''] }}
+                  {{ states('input_select.smartlife_data_source') == 'manual_fallback' or states('switch.smartlife_primary_outlet_raw') in ['unknown', 'unavailable', 'none', ''] }}
                 sequence:
                   - service: input_boolean.turn_on
                     target:
                       entity_id: input_boolean.smartlife_primary_outlet_manual_state
             default:
               - service: switch.turn_on
-                data:
-                  entity_id: "{{ states('input_text.smartlife_primary_outlet_raw_entity_id') }}"
+                target:
+                  entity_id: switch.smartlife_primary_outlet_raw
         turn_off:
           - choose:
               - conditions: >
-                  {% set raw_entity = states('input_text.smartlife_primary_outlet_raw_entity_id') %}
-                  {% set raw = states(raw_entity) if raw_entity not in ['unknown', 'unavailable', 'none', ''] else 'unknown' %}
-                  {{ states('input_select.smartlife_data_source') == 'manual_fallback' or raw in ['unknown', 'unavailable', 'none', ''] }}
+                  {{ states('input_select.smartlife_data_source') == 'manual_fallback' or states('switch.smartlife_primary_outlet_raw') in ['unknown', 'unavailable', 'none', ''] }}
                 sequence:
                   - service: input_boolean.turn_off
                     target:
                       entity_id: input_boolean.smartlife_primary_outlet_manual_state
             default:
               - service: switch.turn_off
-                data:
-                  entity_id: "{{ states('input_text.smartlife_primary_outlet_raw_entity_id') }}"
+                target:
+                  entity_id: switch.smartlife_primary_outlet_raw
