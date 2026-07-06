@@ -10,8 +10,8 @@ views:
       - entity: cover.meross_garage_door
       - entity: switch.pc_steckdose_1
       - entity: sensor.pc_leistung
-      - entity: sensor.dimplex_mode_text
-      - entity: sensor.dimplex_hot_water_temp
+      - entity: sensor.dimplex_operating_mode_text
+      - entity: sensor.dimplex_warm_water_temp
     sections:
       - type: grid
         cards:
@@ -47,7 +47,7 @@ views:
           - type: button
             name: Waermepumpe
             icon: mdi:heat-pump
-            entity: sensor.dimplex_mode_text
+            entity: sensor.dimplex_operating_mode_text
             tap_action:
               action: more-info
       - type: grid
@@ -75,29 +75,45 @@ views:
           - type: heading
             heading: Waermepumpe Modbus
           - type: tile
-            entity: sensor.dimplex_mode_text
-            name: Modbus Modus
+            entity: sensor.dimplex_operating_mode_text
+            name: Betriebsart
           - type: tile
-            entity: sensor.dimplex_smart_grid_text
-            name: Smart Grid
+            entity: sensor.dimplex_heat_pump_live_status
+            name: Live Status
           - type: tile
-            entity: sensor.dimplex_hot_water_temp
+            entity: sensor.dimplex_warm_water_temp
             name: Warmwasser
           - type: tile
-            entity: sensor.dimplex_hot_water_target_temp
-            name: Warmwasser Ziel
+            entity: sensor.dimplex_room_target_temp
+            name: Raum Soll
+          - type: tile
+            entity: sensor.dimplex_heating_supply_temp
+            name: Vorlauf
+          - type: tile
+            entity: sensor.dimplex_heating_return_temp
+            name: Ruecklauf
           - type: entities
             entities:
+              - entity: sensor.dimplex_operating_mode_raw
+                name: Betriebsart Rohwert
+              - entity: sensor.dimplex_heat_pump_status_raw
+                name: Live Status Rohwert
+              - entity: sensor.dimplex_compressor_status_text
+                name: Kompressor Status
+              - entity: sensor.dimplex_compressor_speed_raw
+                name: Kompressor Drehzahl Rohwert
+              - entity: sensor.dimplex_smart_grid_state_text
+                name: Smart Grid Status
               - entity: sensor.dimplex_mode
-                name: Modus Rohwert
+                name: Community Modus Rohwert
               - entity: sensor.dimplex_smart_grid
-                name: Smart Grid Rohwert
+                name: Community Smart Grid Rohwert
               - entity: sensor.dimplex_parallel_displacement
                 name: Parallelverschiebung
               - entity: sensor.dimplex_hot_water_target_raw
-                name: WW-Ziel Rohwert
+                name: Community WW-Ziel Rohwert
               - entity: sensor.dimplex_max_temperature_raw
-                name: Maximaltemperatur Rohwert
+                name: Community Maximaltemperatur Rohwert
       - type: grid
         cards:
           - type: heading

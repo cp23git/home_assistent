@@ -68,7 +68,13 @@ read-only Modbus TCP hub:
 - host `192.168.178.34`
 - port `502`
 - unit/slave `1`
-- verified input registers: `5007`, `5167`, `5002`, `5022`, `5088`, `30`, `40`
+- verified input registers from the community example: `5007`, `5167`,
+  `5002`, `5022`, `5088`, `30`, `40`
+- verified input registers from the installed Dimplex cloud integration
+  variable list: `714`, `502`, `1246`, `1294`, `1300`, `1305`, `1472`,
+  `1500`, `1586`
+- dashboards prefer the locally verified temperature and operating mode
+  registers because they return plausible live values on this controller
 
 The package still follows the same safe pattern as the Growatt helpers:
 
@@ -76,7 +82,8 @@ The package still follows the same safe pattern as the Growatt helpers:
 - optional manual override helpers keep the setup usable during early integration work
 - nothing in this repository turns heating functions on or off automatically
 - write automations stay out of scope until the meaning of the live mode value
-  `43` is confirmed against the Dimplex register map
+  range from the community register `5007` is confirmed against the Dimplex
+  register map
 
 ## Additional devices to map
 
@@ -100,6 +107,9 @@ Current integration path:
 - Modbus TCP is enabled and reachable from the Home Assistant container
 - the first read-only register set has been verified live
 - dashboards show the raw Modbus values and safe text helpers
+- the HACS/custom `dimplex` integration is installed on the live system but is
+  currently only visible as update metadata; it is not the active local data
+  path for the dashboards
 
 Future control concepts to document later:
 

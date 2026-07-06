@@ -36,15 +36,24 @@ placeholder package.
 - Modbus TCP is reachable from the Home Assistant container at `192.168.178.34:502`
 - the Dimplex/NWPM Modbus hub is modeled as `dimplex` with unit/slave `1`
 - verified read-only input registers on the live controller:
-  - `5007` Dimplex mode currently returned `43`
+  - `5007` Dimplex community mode/reference currently returned changing values such as `43`, `46`, and `51`
   - `5167` Smart Grid currently returned `11`
   - `5002` parallel displacement currently returned `1`
   - `5022` hot water target raw currently returned `1`
   - `5088` max temperature raw currently returned `0`
   - `30` hot water temperature currently returned `0`
   - `40` hot water target temperature currently returned `0`
+  - `714` operating mode currently returned `0`
+  - `502` room target temperature currently returned `200` (`20.0 C`)
+  - `1294` heating return temperature currently returned `328` (`32.8 C`)
+  - `1300` heating supply temperature currently returned `319` (`31.9 C`)
+  - `1305` warm water temperature currently returned `470` (`47.0 C`)
+  - `1246` Smart Grid state currently returned `0`
+  - `1472` compressor speed currently returned `0`
+  - `1500` compressor status currently returned `0`
+  - `1586` heat pump live status currently returned `0`
 - do not enable write automations for mode control until the register map and the
-  meaning of mode value `43` are confirmed
+  meaning of the changing community mode values are confirmed
 - use the live raw sensor in dashboards until the helper is wired to a stable source
 
 ## What still needs to be chosen

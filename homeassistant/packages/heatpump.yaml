@@ -66,6 +66,85 @@ modbus:
         state_class: measurement
         scale: 0.1
         precision: 1
+      - name: Dimplex Operating Mode Raw
+        unique_id: dimplex_operating_mode_raw
+        slave: 1
+        address: 714
+        scan_interval: 10
+        input_type: input
+        data_type: uint16
+      - name: Dimplex Room Target Temp
+        unique_id: dimplex_room_target_temp
+        slave: 1
+        address: 502
+        scan_interval: 10
+        input_type: input
+        data_type: int16
+        unit_of_measurement: C
+        state_class: measurement
+        scale: 0.1
+        precision: 1
+      - name: Dimplex Heating Return Temp
+        unique_id: dimplex_heating_return_temp
+        slave: 1
+        address: 1294
+        scan_interval: 10
+        input_type: input
+        data_type: int16
+        unit_of_measurement: C
+        state_class: measurement
+        scale: 0.1
+        precision: 1
+      - name: Dimplex Heating Supply Temp
+        unique_id: dimplex_heating_supply_temp
+        slave: 1
+        address: 1300
+        scan_interval: 10
+        input_type: input
+        data_type: int16
+        unit_of_measurement: C
+        state_class: measurement
+        scale: 0.1
+        precision: 1
+      - name: Dimplex Warm Water Temp
+        unique_id: dimplex_warm_water_temp
+        slave: 1
+        address: 1305
+        scan_interval: 10
+        input_type: input
+        data_type: int16
+        unit_of_measurement: C
+        state_class: measurement
+        scale: 0.1
+        precision: 1
+      - name: Dimplex Smart Grid State Raw
+        unique_id: dimplex_smart_grid_state_raw
+        slave: 1
+        address: 1246
+        scan_interval: 10
+        input_type: input
+        data_type: uint16
+      - name: Dimplex Compressor Speed Raw
+        unique_id: dimplex_compressor_speed_raw
+        slave: 1
+        address: 1472
+        scan_interval: 10
+        input_type: input
+        data_type: uint16
+      - name: Dimplex Compressor Status Raw
+        unique_id: dimplex_compressor_status_raw
+        slave: 1
+        address: 1500
+        scan_interval: 10
+        input_type: input
+        data_type: uint16
+      - name: Dimplex Heat Pump Status Raw
+        unique_id: dimplex_heat_pump_status_raw
+        slave: 1
+        address: 1586
+        scan_interval: 10
+        input_type: input
+        data_type: uint16
 
 input_boolean:
   enable_heatpump_pv_optimization:
@@ -144,6 +223,72 @@ template:
             unknown
           {% endif %}
         icon: mdi:transmission-tower
+      - name: Dimplex Operating Mode Text
+        unique_id: dimplex_operating_mode_text
+        state: >
+          {% set value = states('sensor.dimplex_operating_mode_raw') | int(-1) %}
+          {% set modes = {
+            0: 'Sommer nur Warmwasser',
+            1: 'Winter',
+            2: 'Urlaub',
+            3: 'Party',
+            4: '2. Waermeerzeuger',
+            5: 'Kuehlen',
+            6: 'Auto'
+          } %}
+          {% if value in modes %}
+            {{ modes[value] }}
+          {% elif value >= 0 %}
+            Betriebsart {{ value }}
+          {% else %}
+            unknown
+          {% endif %}
+        icon: mdi:sun-snowflake-variant
+      - name: Dimplex Heat Pump Live Status
+        unique_id: dimplex_heat_pump_live_status
+        state: >
+          {% set value = states('sensor.dimplex_heat_pump_status_raw') | int(-1) %}
+          {% set states_map = {
+            0: 'Off',
+            1: 'Off',
+            2: 'Heating',
+            3: 'Pool',
+            4: 'Hot water',
+            5: 'Cooling',
+            10: 'Defrosting'
+          } %}
+          {% if value in states_map %}
+            {{ states_map[value] }}
+          {% elif value >= 0 %}
+            Status {{ value }}
+          {% else %}
+            unknown
+          {% endif %}
+        icon: mdi:heat-pump
+      - name: Dimplex Compressor Status Text
+        unique_id: dimplex_compressor_status_text
+        state: >
+          {% set value = states('sensor.dimplex_compressor_status_raw') | int(-1) %}
+          {% if value == 0 %}
+            Off
+          {% elif value == 1 %}
+            Active
+          {% elif value >= 0 %}
+            Status {{ value }}
+          {% else %}
+            unknown
+          {% endif %}
+        icon: mdi:pump
+      - name: Dimplex Smart Grid State Text
+        unique_id: dimplex_smart_grid_state_text
+        state: >
+          {% set value = states('sensor.dimplex_smart_grid_state_raw') | int(-1) %}
+          {% if value >= 0 %}
+            Smart Grid state {{ value }}
+          {% else %}
+            unknown
+          {% endif %}
+        icon: mdi:transmission-tower
       - name: Heat Pump Power
         unique_id: heatpump_power_w
         state: >
@@ -162,9 +307,15 @@ template:
       - name: Heat Pump Status
         unique_id: heatpump_status_text
         state: >
+          {% set mode = states('sensor.dimplex_operating_mode_text') %}
+          {% set live = states('sensor.dimplex_heat_pump_live_status') %}
           {% set dimplex = states('sensor.dimplex_mode_text') %}
           {% set raw = states('sensor.heatpump_status_raw') %}
-          {% if dimplex not in ['unknown', 'unavailable', 'none', ''] %}
+          {% if mode not in ['unknown', 'unavailable', 'none', ''] and live not in ['unknown', 'unavailable', 'none', ''] %}
+            {{ mode }} / {{ live }}
+          {% elif mode not in ['unknown', 'unavailable', 'none', ''] %}
+            {{ mode }}
+          {% elif dimplex not in ['unknown', 'unavailable', 'none', ''] %}
             {{ dimplex }}
           {% elif raw not in ['unknown', 'unavailable', 'none', ''] %}
             {{ raw }}
