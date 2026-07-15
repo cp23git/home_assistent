@@ -91,7 +91,16 @@ template:
         state_class: measurement
       - name: Total Home Consumption
         unique_id: total_home_consumption_w
-        state: "{{ states('sensor.growatt_house_consumption_w') | float(0) | round(0) }}"
+        state: >
+          {% set direct = states('sensor.fnpaf5n02h_lokale_lastleistung') %}
+          {% set growatt = states('sensor.growatt_house_consumption_w') %}
+          {% if direct not in ['unknown', 'unavailable', 'none', ''] %}
+            {{ direct | float(0) | round(0) }}
+          {% elif growatt not in ['unknown', 'unavailable', 'none', ''] %}
+            {{ growatt | float(0) | round(0) }}
+          {% else %}
+            0
+          {% endif %}
         unit_of_measurement: W
         device_class: power
         state_class: measurement
@@ -106,13 +115,31 @@ template:
         state_class: measurement
       - name: Home Grid Import
         unique_id: home_grid_import_w
-        state: "{{ states('sensor.growatt_grid_import_w') | float(0) | round(0) }}"
+        state: >
+          {% set direct = states('sensor.fnpaf5n02h_bezugsleistung') %}
+          {% set growatt = states('sensor.growatt_grid_import_w') %}
+          {% if direct not in ['unknown', 'unavailable', 'none', ''] %}
+            {{ direct | float(0) | round(0) }}
+          {% elif growatt not in ['unknown', 'unavailable', 'none', ''] %}
+            {{ growatt | float(0) | round(0) }}
+          {% else %}
+            0
+          {% endif %}
         unit_of_measurement: W
         device_class: power
         state_class: measurement
       - name: Home Grid Export
         unique_id: home_grid_export_w
-        state: "{{ states('sensor.growatt_grid_export_w') | float(0) | round(0) }}"
+        state: >
+          {% set direct = states('sensor.fnpaf5n02h_einspeiseleistung') %}
+          {% set growatt = states('sensor.growatt_grid_export_w') %}
+          {% if direct not in ['unknown', 'unavailable', 'none', ''] %}
+            {{ direct | float(0) | round(0) }}
+          {% elif growatt not in ['unknown', 'unavailable', 'none', ''] %}
+            {{ growatt | float(0) | round(0) }}
+          {% else %}
+            0
+          {% endif %}
         unit_of_measurement: W
         device_class: power
         state_class: measurement
@@ -124,7 +151,19 @@ template:
         state_class: measurement
       - name: Home Battery Power
         unique_id: home_battery_power_w
-        state: "{{ states('sensor.growatt_battery_power_w') | float(0) | round(0) }}"
+        state: >
+          {% set charge_1 = states('sensor.fnpaf5n02h_batterie_1_aufladung_w') %}
+          {% set charge_2 = states('sensor.fnpaf5n02h_batterie_2_aufladung_w') %}
+          {% set discharge_1 = states('sensor.fnpaf5n02h_batterie_1_entladung_w') %}
+          {% set discharge_2 = states('sensor.fnpaf5n02h_batterie_2_entladung_w') %}
+          {% set direct_available = discharge_1 not in ['unknown', 'unavailable', 'none', ''] or discharge_2 not in ['unknown', 'unavailable', 'none', ''] %}
+          {% if direct_available %}
+            {% set charge = (charge_1 | float(0)) + (charge_2 | float(0)) %}
+            {% set discharge = (discharge_1 | float(0)) + (discharge_2 | float(0)) %}
+            {{ (discharge - charge) | round(0) }}
+          {% else %}
+            {{ states('sensor.growatt_battery_power_w') | float(0) | round(0) }}
+          {% endif %}
         unit_of_measurement: W
         device_class: power
         state_class: measurement

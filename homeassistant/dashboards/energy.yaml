@@ -44,6 +44,45 @@ views:
       - type: grid
         cards:
           - type: heading
+            heading: Nachtverbrauch
+          - type: markdown
+            content: >
+              Hier siehst du die Last aus dem echten Inverter-Lastwert,
+              Netzbezug, Batterie und die wichtigsten Dauerlasten. Wenn
+              dieser Block nachts deutlich ueber 250 bis 300 W liegt, lohnt
+              sich der Blick auf einzelne Grundlasten.
+          - type: entities
+            entities:
+              - entity: sensor.fnpaf5n02h_lastverbrauch_heute
+                name: Hausverbrauch heute
+              - entity: sensor.fnpaf5n02h_netzbezug_heute
+                name: Netzbezug heute
+              - entity: sensor.fnpaf5n02h_eigenverbrauch_heute
+                name: Eigenverbrauch heute
+              - entity: sensor.fnpaf5n02h_alle_batterien_heute_entladen
+                name: Batterien entladen heute
+              - entity: sensor.fnpaf5n02h_alle_batterien_heute_aufgeladen
+                name: Batterien geladen heute
+              - entity: sensor.pc_energie_gesamt
+                name: SmartLife Energie gesamt
+              - entity: sensor.1_warmepumpe_wasser_energie_gesamt
+                name: Waermepumpe Energie gesamt
+              - entity: sensor.solarman_inverter_total_production
+                name: Solarman Gesamtproduktion
+          - type: history-graph
+            title: Nacht und letzte 24 Stunden
+            hours_to_show: 24
+            entities:
+              - sensor.fnpaf5n02h_lokale_lastleistung
+              - sensor.fnpaf5n02h_bezugsleistung
+              - sensor.fnpaf5n02h_einspeiseleistung
+              - sensor.fnpaf5n02h_batterie_1_entladung_w
+              - sensor.fnpaf5n02h_batterie_1_aufladung_w
+              - sensor.pc_leistung
+              - sensor.1_warmepumpe_wasser_leistung
+      - type: grid
+        cards:
+          - type: heading
             heading: Produktionszaehler
           - type: entities
             entities:
