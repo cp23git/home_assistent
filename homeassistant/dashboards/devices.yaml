@@ -81,6 +81,12 @@ views:
             entity: sensor.dimplex_heat_pump_live_status
             name: Live Status
           - type: tile
+            entity: binary_sensor.dimplex_compressor_1
+            name: Verdichter 1
+          - type: tile
+            entity: binary_sensor.dimplex_hot_water_pump
+            name: Warmwasserpumpe
+          - type: tile
             entity: sensor.dimplex_warm_water_temp
             name: Warmwasser
           - type: tile
@@ -100,6 +106,18 @@ views:
                 name: Live Status Rohwert
               - entity: sensor.dimplex_compressor_status_text
                 name: Kompressor Status
+              - entity: binary_sensor.dimplex_compressor_1
+                name: Verdichter 1 Coil
+              - entity: binary_sensor.dimplex_compressor_2
+                name: Verdichter 2 Coil
+              - entity: binary_sensor.dimplex_fan_primary_pump
+                name: Ventilator/Primaerpumpe
+              - entity: binary_sensor.dimplex_heating_pump
+                name: Heizungspumpe
+              - entity: binary_sensor.dimplex_hot_water_pump
+                name: Warmwasserpumpe
+              - entity: binary_sensor.dimplex_collective_fault
+                name: Sammelstoerung
               - entity: sensor.dimplex_compressor_speed_raw
                 name: Kompressor Drehzahl Rohwert
               - entity: sensor.dimplex_smart_grid_state_text

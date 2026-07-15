@@ -8,6 +8,49 @@ modbus:
     port: 502
     delay: 0
     timeout: 5
+    binary_sensors:
+      - name: Dimplex Compressor 1
+        unique_id: dimplex_compressor_1
+        slave: 1
+        address: 41
+        input_type: coil
+        scan_interval: 10
+        device_class: running
+      - name: Dimplex Compressor 2
+        unique_id: dimplex_compressor_2
+        slave: 1
+        address: 42
+        input_type: coil
+        scan_interval: 10
+        device_class: running
+      - name: Dimplex Fan Primary Pump
+        unique_id: dimplex_fan_primary_pump
+        slave: 1
+        address: 43
+        input_type: coil
+        scan_interval: 10
+        device_class: running
+      - name: Dimplex Heating Pump
+        unique_id: dimplex_heating_pump
+        slave: 1
+        address: 45
+        input_type: coil
+        scan_interval: 10
+        device_class: running
+      - name: Dimplex Hot Water Pump
+        unique_id: dimplex_hot_water_pump
+        slave: 1
+        address: 46
+        input_type: coil
+        scan_interval: 10
+        device_class: running
+      - name: Dimplex Collective Fault
+        unique_id: dimplex_collective_fault
+        slave: 1
+        address: 57
+        input_type: coil
+        scan_interval: 10
+        device_class: problem
     sensors:
       - name: Dimplex Mode
         unique_id: dimplex_mode
@@ -268,8 +311,18 @@ template:
       - name: Dimplex Compressor Status Text
         unique_id: dimplex_compressor_status_text
         state: >
+          {% set compressor_1 = states('binary_sensor.dimplex_compressor_1') %}
+          {% set compressor_2 = states('binary_sensor.dimplex_compressor_2') %}
           {% set value = states('sensor.dimplex_compressor_status_raw') | int(-1) %}
-          {% if value == 0 %}
+          {% if compressor_1 == 'on' and compressor_2 == 'on' %}
+            Both active
+          {% elif compressor_1 == 'on' %}
+            Compressor 1 active
+          {% elif compressor_2 == 'on' %}
+            Compressor 2 active
+          {% elif compressor_1 == 'off' and compressor_2 == 'off' %}
+            Off
+          {% elif value == 0 %}
             Off
           {% elif value == 1 %}
             Active
