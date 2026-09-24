@@ -16,6 +16,23 @@ input_boolean:
     name: SmartLife Primary Outlet Manual State
     icon: mdi:power-socket-eu
 
+automation:
+  - id: smartlife_recover_tuya_connection
+    alias: SmartLife Tuya Verbindung wiederherstellen
+    mode: single
+    triggers:
+      - trigger: time_pattern
+        minutes: "/15"
+    conditions:
+      - condition: state
+        entity_id: switch.pc_steckdose_1
+        state: unavailable
+        for: "00:05:00"
+    actions:
+      - action: homeassistant.reload_config_entry
+        target:
+          entity_id: switch.pc_steckdose_1
+
 template:
   - switch:
       - name: SmartLife Primary Outlet
