@@ -1,16 +1,13 @@
-# Placeholder sensors for Growatt. Replace the *_raw entity IDs with the actual
-# local or cloud integration entities once the device access method has been
-# chosen and verified. The helper inputs keep the first version usable even when
-# the raw integration is not present yet.
+# Growatt helpers use the verified FNPAF5N02H cloud entities by default.
+# Manual values are opt-in; a missing live reading is not a manual fallback.
 
 input_select:
   growatt_data_source:
     name: Growatt Data Source
     options:
-      - local_modbus
       - growatt_cloud
+      - local_modbus
       - manual_fallback
-    initial: manual_fallback
     icon: mdi:solar-power
 
 input_number:
@@ -69,79 +66,118 @@ template:
         state: "{{ states('input_select.growatt_data_source') }}"
       - name: Growatt PV Power
         unique_id: growatt_pv_power_w
+        # ppv is PV input power; pac also includes battery charge/discharge.
+        availability: >
+          {% set source = states('input_select.growatt_data_source') %}
+          {% set entity = 'input_number.growatt_pv_power_override_w' if source == 'manual_fallback'
+             else 'sensor.growatt_pv_power_raw' if source == 'local_modbus'
+             else 'sensor.fnpaf5n02h_interne_leistung' %}
+          {{ is_number(states(entity)) and states(entity) | float(0) >= 0 }}
         state: >
           {% set source = states('input_select.growatt_data_source') %}
-          {% set raw = states('sensor.growatt_pv_power_raw') %}
-          {% if source == 'manual_fallback' or raw in ['unknown', 'unavailable', 'none', ''] %}
-            {{ states('input_number.growatt_pv_power_override_w') | float(0) | round(0) }}
-          {% else %}
-            {{ raw | float(0) | round(0) }}
-          {% endif %}
+          {% set entity = 'input_number.growatt_pv_power_override_w' if source == 'manual_fallback'
+             else 'sensor.growatt_pv_power_raw' if source == 'local_modbus'
+             else 'sensor.fnpaf5n02h_interne_leistung' %}
+          {{ states(entity) | float(0) | round(1) }}
         unit_of_measurement: W
         device_class: power
         state_class: measurement
       - name: Growatt Battery SoC
         unique_id: growatt_battery_soc_percent
+        availability: >
+          {% set source = states('input_select.growatt_data_source') %}
+          {% set entity = 'input_number.growatt_battery_soc_override_percent' if source == 'manual_fallback'
+             else 'sensor.growatt_battery_soc_raw' if source == 'local_modbus'
+             else 'sensor.fnpaf5n02h_ladezustand_soc' %}
+          {{ is_number(states(entity)) and 0 <= states(entity) | float(0) <= 100 }}
         state: >
           {% set source = states('input_select.growatt_data_source') %}
-          {% set raw = states('sensor.growatt_battery_soc_raw') %}
-          {% if source == 'manual_fallback' or raw in ['unknown', 'unavailable', 'none', ''] %}
-            {{ states('input_number.growatt_battery_soc_override_percent') | float(0) | round(0) }}
-          {% else %}
-            {{ raw | float(0) | round(0) }}
-          {% endif %}
+          {% set entity = 'input_number.growatt_battery_soc_override_percent' if source == 'manual_fallback'
+             else 'sensor.growatt_battery_soc_raw' if source == 'local_modbus'
+             else 'sensor.fnpaf5n02h_ladezustand_soc' %}
+          {{ states(entity) | float(0) | round(0) }}
         unit_of_measurement: "%"
         device_class: battery
         state_class: measurement
       - name: Growatt Battery Power
         unique_id: growatt_battery_power_w
+        availability: >
+          {% set source = states('input_select.growatt_data_source') %}
+          {% if source == 'manual_fallback' %}
+            {% set value = states('input_number.growatt_battery_power_override_w') %}
+            {{ is_number(value) and -20000 < value | float(0) <= 20000 }}
+          {% elif source == 'local_modbus' %}
+            {{ is_number(states('sensor.growatt_battery_power_raw')) }}
+          {% else %}
+            {{ is_number(states('sensor.fnpaf5n02h_batterie_1_aufladung_w'))
+               and is_number(states('sensor.fnpaf5n02h_batterie_2_aufladung_w'))
+               and is_number(states('sensor.fnpaf5n02h_batterie_1_entladung_w'))
+               and is_number(states('sensor.fnpaf5n02h_batterie_2_entladung_w')) }}
+          {% endif %}
         state: >
           {% set source = states('input_select.growatt_data_source') %}
-          {% set raw = states('sensor.growatt_battery_power_raw') %}
-          {% if source == 'manual_fallback' or raw in ['unknown', 'unavailable', 'none', ''] %}
-            {{ states('input_number.growatt_battery_power_override_w') | float(0) | round(0) }}
+          {% if source == 'manual_fallback' %}
+            {{ states('input_number.growatt_battery_power_override_w') | float(0) | round(1) }}
+          {% elif source == 'local_modbus' %}
+            {{ states('sensor.growatt_battery_power_raw') | float(0) | round(1) }}
           {% else %}
-            {{ raw | float(0) | round(0) }}
+            {% set charge = (states('sensor.fnpaf5n02h_batterie_1_aufladung_w') | float(0))
+               + (states('sensor.fnpaf5n02h_batterie_2_aufladung_w') | float(0)) %}
+            {% set discharge = (states('sensor.fnpaf5n02h_batterie_1_entladung_w') | float(0))
+               + (states('sensor.fnpaf5n02h_batterie_2_entladung_w') | float(0)) %}
+            {{ (discharge - charge) | round(1) }}
           {% endif %}
         unit_of_measurement: W
         device_class: power
         state_class: measurement
       - name: Growatt Grid Import
         unique_id: growatt_grid_import_w
+        availability: >
+          {% set source = states('input_select.growatt_data_source') %}
+          {% set entity = 'input_number.growatt_grid_import_override_w' if source == 'manual_fallback'
+             else 'sensor.growatt_grid_import_raw' if source == 'local_modbus'
+             else 'sensor.fnpaf5n02h_bezugsleistung' %}
+          {{ is_number(states(entity)) and states(entity) | float(0) >= 0 }}
         state: >
           {% set source = states('input_select.growatt_data_source') %}
-          {% set raw = states('sensor.growatt_grid_import_raw') %}
-          {% if source == 'manual_fallback' or raw in ['unknown', 'unavailable', 'none', ''] %}
-            {{ states('input_number.growatt_grid_import_override_w') | float(0) | round(0) }}
-          {% else %}
-            {{ raw | float(0) | round(0) }}
-          {% endif %}
+          {% set entity = 'input_number.growatt_grid_import_override_w' if source == 'manual_fallback'
+             else 'sensor.growatt_grid_import_raw' if source == 'local_modbus'
+             else 'sensor.fnpaf5n02h_bezugsleistung' %}
+          {{ states(entity) | float(0) | round(1) }}
         unit_of_measurement: W
         device_class: power
         state_class: measurement
       - name: Growatt Grid Export
         unique_id: growatt_grid_export_w
+        availability: >
+          {% set source = states('input_select.growatt_data_source') %}
+          {% set entity = 'input_number.growatt_grid_export_override_w' if source == 'manual_fallback'
+             else 'sensor.growatt_grid_export_raw' if source == 'local_modbus'
+             else 'sensor.fnpaf5n02h_einspeiseleistung' %}
+          {{ is_number(states(entity)) and states(entity) | float(0) >= 0 }}
         state: >
           {% set source = states('input_select.growatt_data_source') %}
-          {% set raw = states('sensor.growatt_grid_export_raw') %}
-          {% if source == 'manual_fallback' or raw in ['unknown', 'unavailable', 'none', ''] %}
-            {{ states('input_number.growatt_grid_export_override_w') | float(0) | round(0) }}
-          {% else %}
-            {{ raw | float(0) | round(0) }}
-          {% endif %}
+          {% set entity = 'input_number.growatt_grid_export_override_w' if source == 'manual_fallback'
+             else 'sensor.growatt_grid_export_raw' if source == 'local_modbus'
+             else 'sensor.fnpaf5n02h_einspeiseleistung' %}
+          {{ states(entity) | float(0) | round(1) }}
         unit_of_measurement: W
         device_class: power
         state_class: measurement
       - name: Growatt House Consumption
         unique_id: growatt_house_consumption_w
+        availability: >
+          {% set source = states('input_select.growatt_data_source') %}
+          {% set entity = 'input_number.growatt_house_consumption_override_w' if source == 'manual_fallback'
+             else 'sensor.growatt_house_consumption_raw' if source == 'local_modbus'
+             else 'sensor.fnpaf5n02h_lokale_lastleistung' %}
+          {{ is_number(states(entity)) and states(entity) | float(0) >= 0 }}
         state: >
           {% set source = states('input_select.growatt_data_source') %}
-          {% set raw = states('sensor.growatt_house_consumption_raw') %}
-          {% if source == 'manual_fallback' or raw in ['unknown', 'unavailable', 'none', ''] %}
-            {{ states('input_number.growatt_house_consumption_override_w') | float(0) | round(0) }}
-          {% else %}
-            {{ raw | float(0) | round(0) }}
-          {% endif %}
+          {% set entity = 'input_number.growatt_house_consumption_override_w' if source == 'manual_fallback'
+             else 'sensor.growatt_house_consumption_raw' if source == 'local_modbus'
+             else 'sensor.fnpaf5n02h_lokale_lastleistung' %}
+          {{ states(entity) | float(0) | round(1) }}
         unit_of_measurement: W
         device_class: power
         state_class: measurement
@@ -157,13 +193,28 @@ template:
           {% endif %}
       - name: Growatt Meter Power
         unique_id: growatt_meter_power_w
+        # Positive means grid import, negative means export. The input helper's
+        # uninitialized minimum is deliberately not accepted as a measurement.
+        availability: >
+          {% set source = states('input_select.growatt_data_source') %}
+          {% if source == 'manual_fallback' %}
+            {% set value = states('input_number.growatt_meter_power_override_w') %}
+            {{ is_number(value) and -30000 < value | float(0) <= 30000 }}
+          {% elif source == 'local_modbus' %}
+            {{ is_number(states('sensor.growatt_meter_power_raw')) }}
+          {% else %}
+            {{ is_number(states('sensor.fnpaf5n02h_bezugsleistung'))
+               and is_number(states('sensor.fnpaf5n02h_einspeiseleistung')) }}
+          {% endif %}
         state: >
           {% set source = states('input_select.growatt_data_source') %}
-          {% set raw = states('sensor.growatt_meter_power_raw') %}
-          {% if source == 'manual_fallback' or raw in ['unknown', 'unavailable', 'none', ''] %}
-            {{ states('input_number.growatt_meter_power_override_w') | float(0) | round(0) }}
+          {% if source == 'manual_fallback' %}
+            {{ states('input_number.growatt_meter_power_override_w') | float(0) | round(1) }}
+          {% elif source == 'local_modbus' %}
+            {{ states('sensor.growatt_meter_power_raw') | float(0) | round(1) }}
           {% else %}
-            {{ raw | float(0) | round(0) }}
+            {{ ((states('sensor.fnpaf5n02h_bezugsleistung') | float(0))
+               - (states('sensor.fnpaf5n02h_einspeiseleistung') | float(0))) | round(1) }}
           {% endif %}
         unit_of_measurement: W
         device_class: power

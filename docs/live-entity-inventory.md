@@ -10,7 +10,8 @@ instead of the old `_w` placeholders.
 
 | Entity ID | Current state | Notes |
 | --- | ---: | --- |
-| `sensor.fnpaf5n02h_ausgangsleistung` | `58.3` W | Live Deye / Solarman power output |
+| `sensor.fnpaf5n02h_ausgangsleistung` | `58.3` W | Growatt AC output, includes battery interaction |
+| `sensor.fnpaf5n02h_interne_leistung` | varies | Growatt PV input power (`ppv`) |
 | `sensor.fnpaf5n02h_eigene_leistung` | `159.0` W | Live own power figure from the same source |
 | `sensor.fnpaf5n02h_energie_heute` | `20.2` kWh | PV energy today |
 | `sensor.fnpaf5n02h_systemerzeugung_heute` | `4.3` kWh | System generation today |
@@ -39,8 +40,10 @@ instead of the old `_w` placeholders.
 
 ## Live Helpers Still Available
 
-These helper entities still exist, but many of them are currently zero because
-their upstream source is not wired the way the dashboards used to expect.
+The following helpers were repaired against the live registry on 2026-09-25.
+They now use real upstream measurements and report unavailable for missing data.
+The numerical values in the historical inventory above are examples, not current
+readings.
 
 - `sensor.total_home_supply`
 - `sensor.total_home_generation`
@@ -50,5 +53,11 @@ their upstream source is not wired the way the dashboards used to expect.
 - `sensor.home_battery_soc`
 - `sensor.home_heat_pump_consumption`
 
-For now, the dashboards should prefer the live entities above and only use the
-helpers when they genuinely show a meaningful value.
+`sensor.total_home_generation` sums Growatt PV, Solarman output, and PV oben.
+The PC outlet is not counted as a producer. The seven derived kWh counters now
+use these real entity IDs and begin accumulating from the repair onward.
+
+Growatt battery and signed grid power use native readings, with positive values
+for discharge and import respectively. The old -20000/-30000 helper minima are
+not accepted as measurements. Dimplex mode uses holding register 5015; 5007 was
+the controller's clock minute.

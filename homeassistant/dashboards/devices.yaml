@@ -123,7 +123,7 @@ views:
               - entity: sensor.dimplex_smart_grid_state_text
                 name: Smart Grid Status
               - entity: sensor.dimplex_mode
-                name: Community Modus Rohwert
+                name: Betriebsart Rohwert (NWPM)
               - entity: sensor.dimplex_smart_grid
                 name: Community Smart Grid Rohwert
               - entity: sensor.dimplex_parallel_displacement

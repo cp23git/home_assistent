@@ -9,7 +9,6 @@ input_select:
       - deye_local
       - external_meter
       - estimated
-    initial: estimated
     icon: mdi:solar-power
 
 input_number:
@@ -39,14 +38,18 @@ template:
   - sensor:
       - name: Balcony PV Power
         unique_id: balcony_pv_power_w
+        availability: >
+          {% set source = states('input_select.balcony_pv_data_source') %}
+          {% set entity = 'input_number.balcony_pv_estimated_power_w' if source == 'estimated'
+             else 'sensor.balcony_pv_power_raw' if source == 'external_meter'
+             else 'sensor.solarman_inverter_power' %}
+          {{ is_number(states(entity)) }}
         state: >
           {% set source = states('input_select.balcony_pv_data_source') %}
-          {% set measured = states('sensor.balcony_pv_power_raw') %}
-          {% if source == 'estimated' or measured in ['unknown', 'unavailable', 'none', ''] %}
-            {{ states('input_number.balcony_pv_estimated_power_w') | float(0) | round(0) }}
-          {% else %}
-            {{ measured | float(0) | round(0) }}
-          {% endif %}
+          {% set entity = 'input_number.balcony_pv_estimated_power_w' if source == 'estimated'
+             else 'sensor.balcony_pv_power_raw' if source == 'external_meter'
+             else 'sensor.solarman_inverter_power' %}
+          {{ states(entity) | float(0) | round(1) }}
         unit_of_measurement: W
         device_class: power
         state_class: measurement

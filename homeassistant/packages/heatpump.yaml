@@ -55,9 +55,10 @@ modbus:
       - name: Dimplex Mode
         unique_id: dimplex_mode
         slave: 1
-        address: 5007
+        # NWPM J/L/M register map: 5007 is the clock minute, 5015 is mode.
+        address: 5015
         scan_interval: 10
-        input_type: input
+        input_type: holding
         data_type: uint16
       - name: Dimplex Smart Grid
         unique_id: dimplex_smart_grid
@@ -112,9 +113,9 @@ modbus:
       - name: Dimplex Operating Mode Raw
         unique_id: dimplex_operating_mode_raw
         slave: 1
-        address: 714
+        address: 5015
         scan_interval: 10
-        input_type: input
+        input_type: holding
         data_type: uint16
       - name: Dimplex Room Target Temp
         unique_id: dimplex_room_target_temp
@@ -239,22 +240,8 @@ template:
   - sensor:
       - name: Dimplex Mode Text
         unique_id: dimplex_mode_text
-        state: >
-          {% set value = states('sensor.dimplex_mode') | int(-1) %}
-          {% set modes = {
-            0: 'Summer',
-            1: 'Auto',
-            2: 'Holiday',
-            3: 'Party',
-            4: 'Heat gen 2'
-          } %}
-          {% if value in modes %}
-            {{ modes[value] }}
-          {% elif value >= 0 %}
-            Modbus mode {{ value }}
-          {% else %}
-            unknown
-          {% endif %}
+        availability: "{{ has_value('sensor.dimplex_operating_mode_text') }}"
+        state: "{{ states('sensor.dimplex_operating_mode_text') }}"
         icon: mdi:heat-pump
       - name: Dimplex Smart Grid Text
         unique_id: dimplex_smart_grid_text
@@ -268,16 +255,16 @@ template:
         icon: mdi:transmission-tower
       - name: Dimplex Operating Mode Text
         unique_id: dimplex_operating_mode_text
+        availability: "{{ states('sensor.dimplex_operating_mode_raw') | int(-1) in range(6) }}"
         state: >
           {% set value = states('sensor.dimplex_operating_mode_raw') | int(-1) %}
           {% set modes = {
             0: 'Sommer nur Warmwasser',
-            1: 'Winter',
+            1: 'Auto',
             2: 'Urlaub',
             3: 'Party',
             4: '2. Waermeerzeuger',
-            5: 'Kuehlen',
-            6: 'Auto'
+            5: 'Kuehlen'
           } %}
           {% if value in modes %}
             {{ modes[value] }}
@@ -344,13 +331,16 @@ template:
         icon: mdi:transmission-tower
       - name: Heat Pump Power
         unique_id: heatpump_power_w
+        availability: >
+          {{ is_number(states('sensor.1_warmepumpe_wasser_leistung'))
+             or is_number(states('sensor.heatpump_power_raw')) }}
         state: >
           {% set live = states('sensor.1_warmepumpe_wasser_leistung') %}
           {% set raw = states('sensor.heatpump_power_raw') %}
-          {% if live not in ['unknown', 'unavailable', 'none', ''] %}
-            {{ live | float(0) | round(0) }}
-          {% elif raw not in ['unknown', 'unavailable', 'none', ''] %}
-            {{ raw | float(0) | round(0) }}
+          {% if is_number(live) %}
+            {{ live | float(0) | round(1) }}
+          {% elif is_number(raw) %}
+            {{ raw | float(0) | round(1) }}
           {% else %}
             {{ states('input_number.heatpump_power_override_w') | float(0) | round(0) }}
           {% endif %}

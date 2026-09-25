@@ -1,11 +1,11 @@
 
 # Energy helpers that combine the main production and consumption sources.
-# These templates stay useful even while the device-specific integrations are
-# still being finalized.
+# Entity IDs below are verified against the live entity registry. A unique_id
+# is not an entity_id. Missing measurements must not become zero readings.
 
 sensor:
   - platform: integration
-    source: sensor.total_home_generation_w
+    source: sensor.total_home_generation
     name: Total Home Generation Energy
     unique_id: total_home_generation_energy_kwh
     method: left
@@ -14,7 +14,7 @@ sensor:
     max_sub_interval:
       minutes: 5
   - platform: integration
-    source: sensor.total_home_consumption_w
+    source: sensor.total_home_consumption
     name: Total Home Consumption Energy
     unique_id: total_home_consumption_energy_kwh
     method: left
@@ -23,7 +23,7 @@ sensor:
     max_sub_interval:
       minutes: 5
   - platform: integration
-    source: sensor.home_grid_import_w
+    source: sensor.home_grid_import
     name: Home Grid Import Energy
     unique_id: home_grid_import_energy_kwh
     method: left
@@ -32,7 +32,7 @@ sensor:
     max_sub_interval:
       minutes: 5
   - platform: integration
-    source: sensor.home_grid_export_w
+    source: sensor.home_grid_export
     name: Home Grid Export Energy
     unique_id: home_grid_export_energy_kwh
     method: left
@@ -41,7 +41,7 @@ sensor:
     max_sub_interval:
       minutes: 5
   - platform: integration
-    source: sensor.total_home_supply_w
+    source: sensor.total_home_supply
     name: Total Home Supply Energy
     unique_id: total_home_supply_energy_kwh
     method: left
@@ -50,7 +50,7 @@ sensor:
     max_sub_interval:
       minutes: 5
   - platform: integration
-    source: sensor.balcony_pv_power_w
+    source: sensor.balcony_pv_power
     name: Balcony PV Energy
     unique_id: balcony_pv_energy_kwh
     method: left
@@ -59,7 +59,7 @@ sensor:
     max_sub_interval:
       minutes: 5
   - platform: integration
-    source: sensor.home_heatpump_consumption_w
+    source: sensor.home_heat_pump_consumption
     name: Home Heat Pump Consumption Energy
     unique_id: home_heatpump_consumption_energy_kwh
     method: left
@@ -72,104 +72,81 @@ template:
   - sensor:
       - name: Total Home Generation
         unique_id: total_home_generation_w
+        availability: >
+          {{ is_number(states('sensor.growatt_pv_power'))
+             and is_number(states('sensor.balcony_pv_power'))
+             and is_number(states('sensor.4_pv_oben_leistung')) }}
         state: >
-          {% set growatt = states('sensor.growatt_pv_power_w') | float(0) %}
-          {% set balcony = states('sensor.balcony_pv_power_w') | float(0) %}
-          {{ (growatt + balcony) | round(0) }}
+          {% set growatt = states('sensor.growatt_pv_power') | float(0) %}
+          {% set balcony = states('sensor.balcony_pv_power') | float(0) %}
+          {% set pv_oben = states('sensor.4_pv_oben_leistung') | float(0) %}
+          {{ (growatt + balcony + pv_oben) | round(1) }}
         unit_of_measurement: W
         device_class: power
         state_class: measurement
       - name: Total Home Supply
         unique_id: total_home_supply_w
+        availability: >
+          {{ is_number(states('sensor.total_home_generation'))
+             and is_number(states('sensor.home_grid_import')) }}
         state: >
-          {% set growatt = states('sensor.growatt_pv_power_w') | float(0) %}
-          {% set balcony = states('sensor.balcony_pv_power_w') | float(0) %}
-          {% set grid_import = states('sensor.home_grid_import_w') | float(0) %}
-          {{ (growatt + balcony + grid_import) | round(0) }}
+          {% set generation = states('sensor.total_home_generation') | float(0) %}
+          {% set grid_import = states('sensor.home_grid_import') | float(0) %}
+          {{ (generation + grid_import) | round(1) }}
         unit_of_measurement: W
         device_class: power
         state_class: measurement
       - name: Total Home Consumption
         unique_id: total_home_consumption_w
-        state: >
-          {% set direct = states('sensor.fnpaf5n02h_lokale_lastleistung') %}
-          {% set growatt = states('sensor.growatt_house_consumption_w') %}
-          {% if direct not in ['unknown', 'unavailable', 'none', ''] %}
-            {{ direct | float(0) | round(0) }}
-          {% elif growatt not in ['unknown', 'unavailable', 'none', ''] %}
-            {{ growatt | float(0) | round(0) }}
-          {% else %}
-            0
-          {% endif %}
+        availability: "{{ is_number(states('sensor.growatt_house_consumption')) }}"
+        state: "{{ states('sensor.growatt_house_consumption') | float(0) | round(1) }}"
         unit_of_measurement: W
         device_class: power
         state_class: measurement
       - name: Home PV Surplus
         unique_id: home_pv_surplus_w
+        availability: >
+          {{ is_number(states('sensor.total_home_generation'))
+             and is_number(states('sensor.total_home_consumption')) }}
         state: >
-          {% set generation = states('sensor.total_home_generation_w') | float(0) %}
-          {% set consumption = states('sensor.total_home_consumption_w') | float(0) %}
-          {{ (generation - consumption) | round(0) }}
+          {% set generation = states('sensor.total_home_generation') | float(0) %}
+          {% set consumption = states('sensor.total_home_consumption') | float(0) %}
+          {{ (generation - consumption) | round(1) }}
         unit_of_measurement: W
         device_class: power
         state_class: measurement
       - name: Home Grid Import
         unique_id: home_grid_import_w
-        state: >
-          {% set direct = states('sensor.fnpaf5n02h_bezugsleistung') %}
-          {% set growatt = states('sensor.growatt_grid_import_w') %}
-          {% if direct not in ['unknown', 'unavailable', 'none', ''] %}
-            {{ direct | float(0) | round(0) }}
-          {% elif growatt not in ['unknown', 'unavailable', 'none', ''] %}
-            {{ growatt | float(0) | round(0) }}
-          {% else %}
-            0
-          {% endif %}
+        availability: "{{ is_number(states('sensor.growatt_grid_import')) }}"
+        state: "{{ states('sensor.growatt_grid_import') | float(0) | round(1) }}"
         unit_of_measurement: W
         device_class: power
         state_class: measurement
       - name: Home Grid Export
         unique_id: home_grid_export_w
-        state: >
-          {% set direct = states('sensor.fnpaf5n02h_einspeiseleistung') %}
-          {% set growatt = states('sensor.growatt_grid_export_w') %}
-          {% if direct not in ['unknown', 'unavailable', 'none', ''] %}
-            {{ direct | float(0) | round(0) }}
-          {% elif growatt not in ['unknown', 'unavailable', 'none', ''] %}
-            {{ growatt | float(0) | round(0) }}
-          {% else %}
-            0
-          {% endif %}
+        availability: "{{ is_number(states('sensor.growatt_grid_export')) }}"
+        state: "{{ states('sensor.growatt_grid_export') | float(0) | round(1) }}"
         unit_of_measurement: W
         device_class: power
         state_class: measurement
       - name: Home Battery SoC
         unique_id: home_battery_soc_percent
-        state: "{{ states('sensor.growatt_battery_soc_percent') | float(0) | round(0) }}"
+        availability: "{{ is_number(states('sensor.growatt_battery_soc')) }}"
+        state: "{{ states('sensor.growatt_battery_soc') | float(0) | round(0) }}"
         unit_of_measurement: "%"
         device_class: battery
         state_class: measurement
       - name: Home Battery Power
         unique_id: home_battery_power_w
-        state: >
-          {% set charge_1 = states('sensor.fnpaf5n02h_batterie_1_aufladung_w') %}
-          {% set charge_2 = states('sensor.fnpaf5n02h_batterie_2_aufladung_w') %}
-          {% set discharge_1 = states('sensor.fnpaf5n02h_batterie_1_entladung_w') %}
-          {% set discharge_2 = states('sensor.fnpaf5n02h_batterie_2_entladung_w') %}
-          {% set direct_available = discharge_1 not in ['unknown', 'unavailable', 'none', ''] or discharge_2 not in ['unknown', 'unavailable', 'none', ''] %}
-          {% if direct_available %}
-            {% set charge = (charge_1 | float(0)) + (charge_2 | float(0)) %}
-            {% set discharge = (discharge_1 | float(0)) + (discharge_2 | float(0)) %}
-            {{ (discharge - charge) | round(0) }}
-          {% else %}
-            {{ states('sensor.growatt_battery_power_w') | float(0) | round(0) }}
-          {% endif %}
+        availability: "{{ is_number(states('sensor.growatt_battery_power')) }}"
+        state: "{{ states('sensor.growatt_battery_power') | float(0) | round(1) }}"
         unit_of_measurement: W
         device_class: power
         state_class: measurement
       - name: Home Heat Pump Consumption
         unique_id: home_heatpump_consumption_w
-        state: "{{ states('sensor.heatpump_power_w') | float(0) | round(0) }}"
+        availability: "{{ is_number(states('sensor.heat_pump_power')) }}"
+        state: "{{ states('sensor.heat_pump_power') | float(0) | round(1) }}"
         unit_of_measurement: W
         device_class: power
         state_class: measurement
